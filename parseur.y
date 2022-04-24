@@ -11,7 +11,7 @@
     int yyerror(const char*);   // on fonctions defined by the generator
 %}
 %token NUMBER       // kinds of non-trivial tokens expected from the lexer
-%start expression   // main non-terminal
+%start commande   // main non-terminal
 
 %%  // denotes the begining of the grammar with bison-specific syntax
 
@@ -30,6 +30,10 @@ factor: // a factor is
     | '(' expression ')' // either an expression surounded by parentheses
     | '-' factor // or the negation of a factor
     | NUMBER // or a token NUMBER
+;
+
+commande: //
+    | expression ';'
 ;
 
 %%  // denotes the end of the grammar
