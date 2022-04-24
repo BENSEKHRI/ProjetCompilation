@@ -9,7 +9,7 @@
 
 %%
 
-0|[1-9][0-9]*   { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
+0|[1-9][0-9]*|[1-9][0-9]*.[1-9][0-9]*   { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
 [ \t]           { ; } // ignore space and tab
 [\n]            { return 0; } // exit sucessfully
 .               { printf("lex::char %s\n",yytext); return yytext[0]; } // other one-
