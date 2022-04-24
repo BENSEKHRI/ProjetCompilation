@@ -4,7 +4,10 @@
     int yyerror(const char*); // on fonctions defined by the generator
 %}
 
-%token NUMBER
+%union { double dval; int ival; } ;
+
+%token <dval> NUMBER
+%type <dval> expression
 
 %left '+' '-'
 %left '*'
@@ -15,10 +18,18 @@
 result: expression
 
 expression:
-        expression '+' expression
-    |   expression '-' expression
-    |   expression '*' expression
-    |   '(' expression ')'
-    |   '-' expression %prec UMOINS
-    |   NUMBER
+        expression '+' expression     { $$ = $1+$3; }
+    |   expression '-' expression     { $$ = $1-$3; }
+    |   expression '*' expression     { $$ = $1*$3; }
+    |   '(' expression ')'            { $$ = $2; }
+    |   '-' expression %prec UMOINS   { $$ = -$2; }
+    |   NUMBER                        { $$ = $1; } // default semantic value
 ;
+
+
+%%  // denotes the end of the grammar
+    // everything after %% is copied at the end of the generated .c
+int yyerror(const char *msg) { // called by the parser if the parsing fails
+    printf("Parsing:: syntax error\n");
+    return 1; // to distinguish with the 0 retured by the success
+}
