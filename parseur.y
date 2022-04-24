@@ -24,7 +24,7 @@
 %token <num> NOMBRE
 
 %left '+' '-'
-%left '*' '/'
+%left '%' '*' '/'
 %nonassoc MOINSU
 
 %%
