@@ -9,10 +9,9 @@
 
 %%
 
-0|[1-9][0-9]*   {   printf("lex::NUMBER %s\n",yytext);
+0|[1-9][0-9]*|[1-9][0-9]*,[1-9][0-9]*   {   printf("lex::NUMBER %s\n",yytext);
                     yylval.dval=atoi(yytext); yylval.ival=atoi(yytext); return NUMBER; }
-[ \t]           { ; } // ignore space and tab
-[\n]            { return 0; } // exit sucessfully
+[ \t\n]           { ; } // ignore space and tab
 .               { printf("lex::char %s\n",yytext); return yytext[0]; } // other one-
 
 %%
