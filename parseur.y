@@ -10,7 +10,7 @@
 %type <dval> expression
 
 %left '+' '-'
-%left '*'
+%left '%' '*'
 %nonassoc UMOINS
 
 %%
