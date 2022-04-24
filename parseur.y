@@ -20,6 +20,7 @@ result: expression
 expression:
         expression '+' expression     { $$ = $1+$3; }
     |   expression '-' expression     { $$ = $1-$3; }
+    |   expression '%' expression     { $$ = $1*$3; }
     |   expression '*' expression     { $$ = $1*$3; }
     |   '(' expression ')'            { $$ = $2; }
     |   '-' expression %prec UMOINS   { $$ = -$2; }
