@@ -77,9 +77,15 @@ void code (AST t) {
         case '-':
           printf("SubiNb\n");
           break;
+        case '%':
+          printf("ModuNb\n");
+          break;  
         case '*':
           printf("MultNb\n");
-          break;                                    
+          break;   
+        case '/':
+          printf("DiviNb\n");
+          break;                                
         default: printf("unknown\n");
           break;
       }
