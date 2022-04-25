@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "AST.h"
 
 /* create an AST from a root value and two AST sons */
@@ -52,6 +53,83 @@ void printAST(AST t)
     if (t->left==NULL) printf(":%d: ",t->val); else printf(":%c: ",t->car);
     printAST(t->right);
     printf("] ");
+  }
+}
+
+/**
+ * @brief Cette fonction permet un affichage de la sortie post fixe de l'AST
+ * 
+ * @param t l'AST
+ */
+void code (AST t) {
+  if (t!=NULL) {
+    code(t->left);
+    if (t->left==NULL) 
+      printf("CsteNb %d\n",t->val); 
+    else if (t->right == NULL) 
+      printf("NegNb\n");
+    else 
+      switch (t->car)
+      {
+        case '+':
+          printf("AddiNb\n");
+          break;
+        case '-':
+          printf("SubiNb\n");
+          break;
+        case '*':
+          printf("MultNb\n");
+          break;                                    
+        default: printf("unknown\n");
+          break;
+      }
+    code(t->right);
+  }
+}
+
+/**
+ * @brief Cette fonction permet d'ecrire la sortie post fixe d'un AST dans un fichier. 
+ * 
+ * @param t AST
+ * @param filename nom du fichier qui contiendera la sortie post fixe de l'AST 
+ */
+void echoCodeInFile (AST t, char const *filename) {
+  FILE* f = fopen(filename, "r+");
+  if (f != NULL) {
+    fseek(f, 0, SEEK_END);
+    if (t!=NULL) {
+      echoCodeInFile(t->left, filename);
+      if (t->left==NULL) {
+        fprintf(f,"CsteNb %d\n", t->val);
+      } 
+      else if (t->right == NULL) {
+        fseek(f, 0, SEEK_END);
+        fprintf(f,"NegNb\n");
+      }
+      else 
+        switch (t->car)
+        {
+          case '+':
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"AddiNb\n");
+            break;
+          case '-':
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"SubiNb\n");
+            break;
+          case '*':
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"MultNb\n");
+            break;                                    
+          default: fprintf(f,"unknown\n");
+            break;
+        }
+      fclose(f);
+      echoCodeInFile(t->right, filename);
+    }
+  } else {
+    printf("Erreur lors de leccture / création du ficheir\n");
+    exit(1);
   }
 }
 

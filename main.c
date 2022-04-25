@@ -8,7 +8,10 @@
 #include "parseur.tab.h"/* header for TOKEN */
 #include "AST.c"	/* AST fonctions */
 
-int main(void)
+int modifyExtensionJs (char const* str);
+
+
+int main(int argc, char* argv[])
 {
   AST t; 				/* &t allows to modifie the tree */
   if ((yyparse(&t)==0)) { 		/* yyparse calls yylex */
@@ -16,10 +19,84 @@ int main(void)
     
     /* print the obtained tree */
     if (t->left!=NULL) printf("Root symbol:: %c\n", t->car);	/* check if car at root */
-    printAST(t); printf("\n");
-    		
+
+    if (argv[1]) {  // execution avec argument 
+      if (modifyExtensionJs(argv[1]) == 1) { // fichier js en argument
+        echoCodeInFile(t, argv[1]);
+        printf("\n/*-------------------------------------.\n");
+        printf("|    Ecriture du fichier %s    |\n", argv[1]);
+        printf("`-------------------------------------*/\n");
+
+      } else { // fichier non js en argument
+        printf("\n/*----------.\n");
+        printf("|    AST    |\n");
+        printf("`----------*/\n");
+        printAST(t); printf("\n\n");
+
+        printf("/*----------------.\n");
+        printf("|    POST-FIXE    |\n");
+        printf("`----------------*/\n");
+        code(t); printf("\n");
+      }
+    } else { // execution sans argument
+      printf("\n/*----------.\n");
+      printf("|    AST    |\n");
+      printf("`----------*/\n");
+      printAST(t); printf("\n\n");
+
+      printf("/*----------------.\n");
+      printf("|    POST-FIXE    |\n");
+      printf("`----------------*/\n");
+      code(t); printf("\n");
+    }
+    
     freeAST(t);
   } 
   exit(EXIT_SUCCESS);
 }
 
+
+/**
+ * @brief La fonction prend le nom d'un fichier, teste s'il a une extension si c'est 
+ *        le cas et que c'est un fichier "js" elle créer un nouveau fichier avec le meme 
+ *        nom mais avec l'extension .jsm et renvoi 1.
+ *        Si le fichier n'a pas d'extension ou bien que l'exention n'est pas js, elle retourne 0.
+ * 
+ * @param str le nom d'un fichier.
+ * @return int return 1 si c'est un fichier js, retourne 0 sinon
+ */
+int modifyExtensionJs (char const* str) {
+  if (strchr(str, '.')) { // fichier sans extension 
+    if(strcmp(".js", strchr(str, '.')) == 0) {  // fichier js
+        int taille = (strlen(str) - strlen(strchr(str, '.')));
+        char* dest = (char*) malloc(taille* sizeof(char));
+        int i = 0;
+        while (str[i] != '.') {
+            dest[i] = str[i];
+            i++;
+        }
+        strcat(dest, ".jsm");
+        strcpy((char*)str, dest);
+        free(dest);
+        FILE* f = fopen(str, "w+"); //création du fichier .jsm avec le nom du fichier js
+        if(f == NULL) {
+            printf("Couldn't open file: %s\n", str);
+            exit(1);
+        } else {
+            fclose(f);
+            return 1;
+        }
+    } else { // fichier avec ext mais pas js 
+      printf("\n/*-------------------------------------------------------.\n");
+      printf("|    Le fichier en argument n'est pas un fichier js !    |\n");
+      printf("`-------------------------------------------------------*/\n");
+      return 0;
+    }
+  } else { // fichier sans extension  
+    printf("\n/*-------------------------------------------------------.\n");
+    printf("|    Le fichier en argument n'est pas un fichier js !    |\n");
+    printf("`-------------------------------------------------------*/\n");      
+    return 0;
+  }
+  
+}
