@@ -116,19 +116,24 @@ void echoCodeInFile (AST t, char const *filename) {
         switch (t->car)
         {
           case '+':
-            printf("AddiNb\n");
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"AddiNb\n");
             break;
           case '-':
-            printf("SubiNb\n");
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"SubiNb\n");
             break;
           case '%':
-            printf("ModuNb\n");
-            break;  
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"ModuNb\n");
+            break; 
           case '*':
-            printf("MultNb\n");
-            break;   
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"MultNb\n");
+            break;  
           case '/':
-            printf("DiviNb\n");
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"DiviNb\n");
             break;                                     
           default: fprintf(f,"unknown\n");
             break;
