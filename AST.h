@@ -26,4 +26,11 @@ void freeAST(AST t);
 /* print an AST*/
 void printAST(AST t);
 
+/* print post-fix an AST*/
+void code (AST t);
+
+/* write a post-fix AST in a file*/
+void echoCodeInFile (AST t, char const *filename);
+
+
 #endif // !_AST_H_

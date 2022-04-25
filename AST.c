@@ -62,13 +62,15 @@ void printAST(AST t)
  * @param t l'AST
  */
 void code (AST t) {
-  if (t!=NULL) {
+  if (t!=NULL) {   
     code(t->left);
-    if (t->left==NULL) 
-      printf("CsteNb %d\n",t->val); 
+    if (t->left==NULL) {
+      printf("CsteNb %d\n",t->val);       
+    }
     else if (t->right == NULL) 
       printf("NegNb\n");
-    else 
+    else {
+      code(t->right);
       switch (t->car)
       {
         case '+':
@@ -89,8 +91,8 @@ void code (AST t) {
         default: printf("unknown\n");
           break;
       }
-    code(t->right);
-  }
+    }
+  }   
 }
 
 /**
@@ -103,7 +105,7 @@ void echoCodeInFile (AST t, char const *filename) {
   FILE* f = fopen(filename, "r+");
   if (f != NULL) {
     fseek(f, 0, SEEK_END);
-    if (t!=NULL) {
+    if (t != NULL) {
       echoCodeInFile(t->left, filename);
       if (t->left==NULL) {
         fprintf(f,"CsteNb %d\n", t->val);
@@ -112,7 +114,8 @@ void echoCodeInFile (AST t, char const *filename) {
         fseek(f, 0, SEEK_END);
         fprintf(f,"NegNb\n");
       }
-      else 
+      else {
+        echoCodeInFile(t->right, filename);
         switch (t->car)
         {
           case '+':
@@ -138,11 +141,11 @@ void echoCodeInFile (AST t, char const *filename) {
           default: fprintf(f,"unknown\n");
             break;
         }
+      }
       fclose(f);
-      echoCodeInFile(t->right, filename);
     }
   } else {
-    printf("Erreur lors de leccture / création du ficheir\n");
+    printf("Erreur lors de lecture / création du ficheir\n");
     exit(1);
   }
 }

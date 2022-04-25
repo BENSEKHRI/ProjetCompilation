@@ -22,10 +22,23 @@ int main(int argc, char* argv[])
 
     if (argv[1]) {  // execution avec argument 
       if (modifyExtensionJs(argv[1]) == 1) { // fichier js en argument
+        printf("\n/*----------.\n");
+        printf("|    AST    |\n");
+        printf("`----------*/\n");
+        printAST(t); printf("\n\n");
         echoCodeInFile(t, argv[1]);
         printf("\n/*-------------------------------------.\n");
         printf("|    Ecriture du fichier %s    |\n", argv[1]);
         printf("`-------------------------------------*/\n");
+        FILE* f = fopen(argv[1], "r+");
+        if (f != NULL) {
+          fseek(f, 0, SEEK_END);
+          fprintf(f,"Halt\n");
+          fclose(f);
+        } else {
+          printf("Erreur lors de lecture / création du ficheir\n");
+          exit(1);
+        }      
 
       } else { // fichier non js en argument
         printf("\n/*----------.\n");
@@ -36,7 +49,7 @@ int main(int argc, char* argv[])
         printf("/*----------------.\n");
         printf("|    POST-FIXE    |\n");
         printf("`----------------*/\n");
-        code(t); printf("\n");
+        code(t); printf("Halt\n");
       }
     } else { // execution sans argument
       printf("\n/*----------.\n");
@@ -47,7 +60,7 @@ int main(int argc, char* argv[])
       printf("/*----------------.\n");
       printf("|    POST-FIXE    |\n");
       printf("`----------------*/\n");
-      code(t); printf("\n");
+      code(t); printf("Halt\n");
     }
     
     freeAST(t);
