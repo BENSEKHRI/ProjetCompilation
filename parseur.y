@@ -17,7 +17,7 @@
 
 %union {
   struct _tree* exp;
-  int num;
+  double num;
 } ;
 
 %type  <exp> expression
@@ -41,6 +41,7 @@ expression:
   | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
   | NOMBRE			{ $$ = newLeafAST($1); } 
   ;
+
 
 %%
 

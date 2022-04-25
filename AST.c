@@ -22,7 +22,7 @@ AST newUnaryAST(char car, AST son)
 }
 
 /* create an AST leaf from a value */
-AST newLeafAST(int val)
+AST newLeafAST(double val)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
@@ -50,7 +50,7 @@ void printAST(AST t)
     printf("[ ");
     printAST(t->left);
     /* check if node is car|val */
-    if (t->left==NULL) printf(":%d: ",t->val); else printf(":%c: ",t->car);
+    if (t->left==NULL) printf(":%.2lf : ",t->val); else printf(":%c: ",t->car);
     printAST(t->right);
     printf("] ");
   }
@@ -65,7 +65,7 @@ void code (AST t) {
   if (t!=NULL) {   
     code(t->left);
     if (t->left==NULL) {
-      printf("CsteNb %d\n",t->val);       
+      printf("CsteNb %.2lf \n",t->val);       
     }
     else if (t->right == NULL) 
       printf("NegNb\n");
@@ -108,7 +108,7 @@ void echoCodeInFile (AST t, char const *filename) {
     if (t != NULL) {
       echoCodeInFile(t->left, filename);
       if (t->left==NULL) {
-        fprintf(f,"CsteNb %d\n", t->val);
+        fprintf(f,"CsteNb %.2lf \n", t->val);
       } 
       else if (t->right == NULL) {
         fseek(f, 0, SEEK_END);
