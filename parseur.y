@@ -18,12 +18,17 @@
 %union {
   struct _tree* exp;
   int num;
+  int boolean;
+  int opeBool;
 } ;
 
 %type  <exp> expression
 %token <num> NOMBRE
+%token <boolean> BOOLEAN
+%token <opeBool>OPERATIONBOOL
 
-%left '+' '-'
+%left OPERATIONBOOL 
+%left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
 %left '%' '*' '/'
 %nonassoc MOINSU
 
@@ -38,7 +43,9 @@ expression:
   | expression '/' expression	{ $$ = newBinaryAST('/',$1,$3); }
   | '(' expression ')'		{ $$ = $2; }
   | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
+  | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
   | NOMBRE			{ $$ = newLeafAST($1); } 
+  | BOOLEAN         { $$ = newBooleanAST($1); } 
   ;
 
 %%
