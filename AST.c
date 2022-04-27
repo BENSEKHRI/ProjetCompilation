@@ -112,32 +112,37 @@ void code (AST t) {
   if (t!=NULL) {   
     code(t->left);
     if (t->left==NULL) {
-      printf("CsteNb %.2lf \n",t->val);       
+      if(t->val)
+        printf("CsteNb %.2lf\n",t->val);   
+      if (t->boolean)
+        switch (t->boolean) {
+          case 1: printf("CsteBo True\n"); break;
+          case 2: printf("CsteBo False\n"); break;
+          default:  printf("Error boolean\n"); break;
+        } 
     }
     else if (t->right == NULL) 
       printf("NegNb\n");
     else {
       code(t->right);
-      switch (t->car)
-      {
-        case '+':
-          printf("AddiNb\n");
-          break;
-        case '-':
-          printf("SubiNb\n");
-          break;
-        case '%':
-          printf("ModuNb\n");
-          break;  
-        case '*':
-          printf("MultNb\n");
-          break;   
-        case '/':
-          printf("DiviNb\n");
-          break;                                
-        default: printf("unknown\n");
-          break;
-      }
+      if(t->car)
+        switch (t->car) {
+          case '+': printf("AddiNb\n"); break;
+          case '-': printf("SubiNb\n"); break;
+          case '%': printf("ModuNb\n"); break;  
+          case '*': printf("MultNb\n"); break;   
+          case '/': printf("DiviNb\n"); break;                                
+          default: printf("unknown\n"); break;
+        }
+      if(t->opeBool)
+        switch (t->opeBool) {
+          case 1: printf("Equals\n"); break;
+          case 2: printf("LoEqNb\n"); break;
+          case 3: printf("GrEqNb\n"); break;
+          case 4: printf("LoStNb\n"); break;
+          case 5: printf("GrStNb\n"); break;
+          default: printf("unknown\n"); break;
+        }
     }
   }   
 }
@@ -155,7 +160,18 @@ void echoCodeInFile (AST t, char const *filename) {
     if (t != NULL) {
       echoCodeInFile(t->left, filename);
       if (t->left==NULL) {
-        fprintf(f,"CsteNb %.2lf \n", t->val);
+        if (t->val) {
+          fseek(f, 0, SEEK_END);
+          fprintf(f,"CsteNb %.2lf \n", t->val);
+        }
+        if (t->boolean) {
+          fseek(f, 0, SEEK_END);
+          switch (t->boolean) {
+            case 1: fprintf(f, "CsteBo True\n"); break;
+            case 2: fprintf(f, "CsteBo False\n"); break;
+            default:  fprintf(f, "Error boolean\n"); break;
+          } 
+        }
       } 
       else if (t->right == NULL) {
         fseek(f, 0, SEEK_END);
@@ -163,30 +179,28 @@ void echoCodeInFile (AST t, char const *filename) {
       }
       else {
         echoCodeInFile(t->right, filename);
-        switch (t->car)
-        {
-          case '+':
-            fseek(f, 0, SEEK_END);
-            fprintf(f,"AddiNb\n");
-            break;
-          case '-':
-            fseek(f, 0, SEEK_END);
-            fprintf(f,"SubiNb\n");
-            break;
-          case '%':
-            fseek(f, 0, SEEK_END);
-            fprintf(f,"ModuNb\n");
-            break; 
-          case '*':
-            fseek(f, 0, SEEK_END);
-            fprintf(f,"MultNb\n");
-            break;  
-          case '/':
-            fseek(f, 0, SEEK_END);
-            fprintf(f,"DiviNb\n");
-            break;                                     
-          default: fprintf(f,"unknown\n");
-            break;
+        if (t->car) {
+          fseek(f, 0, SEEK_END);
+          switch (t->car) {
+            case '+': fprintf(f,"AddiNb\n"); break;
+            case '-': fprintf(f,"SubiNb\n"); break;
+            case '%': fprintf(f,"ModuNb\n"); break; 
+            case '*': fprintf(f,"MultNb\n"); break;  
+            case '/': fprintf(f,"DiviNb\n"); break;                                     
+            default: fprintf(f,"unknown\n");
+              break;
+          }
+        }
+        if(t->opeBool) {
+          fseek(f, 0, SEEK_END);
+          switch (t->opeBool) {
+            case 1: fprintf(f, "Equals\n"); break;
+            case 2: fprintf(f, "LoEqNb\n"); break;
+            case 3: fprintf(f, "GrEqNb\n"); break;
+            case 4: fprintf(f, "LoStNb\n"); break;
+            case 5: fprintf(f, "GrStNb\n"); break;
+            default: fprintf(f, "unknown\n"); break;
+          }
         }
       }
       fclose(f);

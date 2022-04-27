@@ -46,7 +46,7 @@ expression:
   | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
   | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
   | NOMBRE			{ $$ = newLeafAST($1); } 
-  | BOOLEAN         { $$ = newBooleanAST($1); } 
+  | BOOLEAN     { $$ = newBooleanAST($1); } 
   ;
 
 %%
