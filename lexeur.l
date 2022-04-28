@@ -46,6 +46,8 @@
 %%
 
 0|[1-9][0-9]*|[0-9]*\.[0-9]+  	{ printf("lex::NOMBRE %s\n",yytext); yylval.num=atoi(yytext); return NOMBRE; }
+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?   { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
+NaN   { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
 True|False             { printf("lex::BOOLEAN %s\n",yytext); yylval.boolean=strToBool(yytext); return BOOLEAN; }  
 ==|\<=|>=|<|>          { printf("lex::OPERATIONBOOL %s\n",yytext); yylval.opeBool=strToOpeBool(yytext); return OPERATIONBOOL; }  
 [ \t\n] 	    { ; } /* ignore space, tab, and line return */
