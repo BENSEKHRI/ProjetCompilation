@@ -18,10 +18,7 @@
 %union {
   struct _tree* exp;
   double num;
-<<<<<<< HEAD
-=======
   int valCal;
->>>>>>> ast
   int boolean;
   int opeBool;
 } ;

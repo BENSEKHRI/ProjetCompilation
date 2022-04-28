@@ -36,13 +36,8 @@ AST newUnaryAST(char car, AST son)
 }
 
 /* create an AST leaf from a value */
-<<<<<<< HEAD
-AST newLeafAST(double val)
-=======
 AST newLeafAST(double val, int valCal)
->>>>>>> ast
 {
-  printf("\n-- %d\n", valCal);
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
     t->val=val;
@@ -135,7 +130,6 @@ void code (AST t) {
           default: printf("Error Float\n"); break;
         }
 
-
       if (t->boolean)
         switch (t->boolean) {
           case 1: printf("CsteBo True\n"); break;
@@ -182,10 +176,17 @@ void echoCodeInFile (AST t, char const *filename) {
     if (t != NULL) {
       echoCodeInFile(t->left, filename);
       if (t->left==NULL) {
-        if (t->val) {
+        if(t->val) {
           fseek(f, 0, SEEK_END);
-          fprintf(f,"CsteNb %.2lf \n", t->val);
+          switch (t->valCal) {
+            case 1: fprintf(f, "CsteNb %.0lf\n", t->val); break;  // int
+            case 2: fprintf(f, "CsteNb %.2lf\n", t->val); break;  // float
+            case 3: fprintf(f, "CsteNb %.2e\n", t->val); break;   // float scientific
+            case 4: fprintf(f, "CsteNb NaN\n"); break;            // NaN
+            default: fprintf(f, "Error Float\n"); break;
+          }
         }
+        
         if (t->boolean) {
           fseek(f, 0, SEEK_END);
           switch (t->boolean) {
