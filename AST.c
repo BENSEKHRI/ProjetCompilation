@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "AST.h"
+#include <string.h>	     /* Manipulation de chaine de caractères */
 
 
 /* create an AST from a root value and two AST sons */
@@ -34,11 +35,13 @@ AST newUnaryAST(char car, AST son)
 }
 
 /* create an AST leaf from a value */
-AST newLeafAST(int val)
+AST newLeafAST(double val, int valCal)
 {
+  printf("\n-- %d\n", valCal);
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
     t->val=val;
+    t->valCal=valCal;
     t->left=NULL;
     t->right=NULL;
   } else printf("MALLOC! ");
@@ -76,12 +79,19 @@ void printAST(AST t)
     /* check if node is car|val */
     if (t->left==NULL) {
       if (t->val) 
-        printf(":%d: ",t->val); 
+        switch (t->valCal) {
+          case 1: printf(":%.0lf: ", t->val); break;  // int
+          case 2: printf(":%.2lf: ", t->val); break;  // float
+          case 3: printf(":%.2e: ", t->val); break;   // float scientific
+          case 4: printf(":NaN: "); break;            // NaN
+          default: printf("Error Float\n"); break;
+        }
+         
       if (t->boolean)
         switch (t->boolean) {
           case 1: printf(":True: "); break;
           case 2: printf(":False: "); break;
-          default:  printf("Error boolean\n"); break;
+          default:  printf("Error Boolean\n"); break;
         }
     }
     else {
@@ -94,7 +104,7 @@ void printAST(AST t)
           case 3: printf(":>=: "); break;
           case 4: printf(":<: "); break;
           case 5: printf(":>: "); break;
-          default: printf("Error boolean operation\n"); break;
+          default: printf("Error Boolean Operation\n"); break;
         }
     }
     printAST(t->right);
