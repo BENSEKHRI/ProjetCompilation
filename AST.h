@@ -6,6 +6,7 @@ struct _tree {
   char car;                    	/* char for arithmetic operation */
   int opeBool;                    	/* string for boolean operation */
   double val;			/* int  for value */
+  int valCal;			/* int  for value */
   int boolean;
   struct _tree* left;    	/* used for unary node but NULL if leaf */
   struct _tree* right;   	/* NULL if unary node or leaf*/
@@ -23,7 +24,7 @@ AST newOpeBoolAST(int opeBool, AST left, AST right);
 AST newUnaryAST(char car, AST son);
 
 /* create an AST leaf from a value */
-AST newLeafAST(double val);
+AST newLeafAST(double val, int valCal);
 
 /* create an AST leaf from a boolean */
 AST newBooleanAST(int boolean);
