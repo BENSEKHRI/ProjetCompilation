@@ -9,6 +9,7 @@
 %token BOOLEAN
 %token OPERATIONBOOL
 
+%left '?' ':'
 %left OPERATIONBOOL 
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
 %left '%' '*'
@@ -26,6 +27,7 @@ expression:
     |   '(' expression ')'
     |   '-' expression %prec UMOINS
     |   expression OPERATIONBOOL expression
+    |   expression '?' expression ':' expression
     |   NUMBER
     |   BOOLEAN
 ;
