@@ -28,6 +28,19 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
   return t;
 }
 
+/* create an AST from a if then else operation and 3 AST sons */
+AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon) {
+  AST t=(struct _tree*) malloc(sizeof(struct _tree));
+  if (t!=NULL){	/* malloc ok */
+    t->car=car1;
+    t->car2=car2;
+    t->left=ifSon;
+    t->right=thenSon;
+    t->ifThenElse=elseSon;
+  } else printf("MALLOC! ");
+  return t;
+}
+
 /* create an AST from a root value and one AST son */
 AST newUnaryAST(char car, AST son)
 {
@@ -37,7 +50,6 @@ AST newUnaryAST(char car, AST son)
 /* create an AST leaf from a value */
 AST newLeafAST(double val, int valCal)
 {
-  printf("\n-- %d\n", valCal);
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
     t->val=val;
@@ -66,6 +78,7 @@ void freeAST(AST t)
   if (t!=NULL) {
     freeAST(t->left);
     freeAST(t->right);
+    freeAST(t->ifThenElse);
     free(t);
   }
 }
@@ -96,7 +109,7 @@ void printAST(AST t)
     }
     else {
       if(t->car)
-        printf(":%c: ",t->car);
+        printf(":%c: ",t->car);     
       if(t->opeBool)
         switch (t->opeBool) {
           case 1: printf(":==: "); break;
@@ -108,6 +121,11 @@ void printAST(AST t)
         }
     }
     printAST(t->right);
+    
+    if (t->car2)
+      printf(":%c: ",t->car2); 
+    
+    printAST(t->ifThenElse);
     printf("] ");
   }
 }

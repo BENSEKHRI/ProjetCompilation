@@ -47,7 +47,7 @@ expression:
   | '(' expression ')'		{ $$ = $2; }
   | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
   | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
-  | expression '?' expression ':' expression
+  | expression '?' expression ':' expression { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
   | NOMBRE			{ $$ = newLeafAST($1, yylval.valCal); } 
   | BOOLEAN         { $$ = newBooleanAST($1); } 
   ;
