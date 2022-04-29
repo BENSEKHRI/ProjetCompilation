@@ -9,7 +9,7 @@ AST newBinaryAST(char car, AST left, AST right)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
-    // Condition d'ajout de taille pour ne cas - exp  float négatif.
+    // Condition d'ajout de taille pour ne cas - expression  float négatif.
     if (left && right) t->taille+=1+left->taille+right->taille;
     if (left && !right) t->taille+=1+left->taille;
     if (right && !left) t->taille+=1+right->taille;

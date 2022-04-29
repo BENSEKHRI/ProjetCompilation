@@ -16,18 +16,25 @@
 %parse-param {struct _tree* *pT} // yyparse(&t) call => *pT = *(&t) = t 
 
 %union {
-  struct _tree* exp;
+  struct _tree* prog;
   double num;
   int valCal;
   int boolean;
   int opeBool;
+  char* var;
 } ;
 
-%type  <exp> expression
+%type  <prog> programme
 %token <num> NOMBRE
 %token <boolean> BOOLEAN
-%token <opeBool>OPERATIONBOOL
+%token <opeBool> OPERATIONBOOL
+%token <var> VARIABLE
+%token AFF
+%token ';'
 
+
+%left ';'
+%left AFF
 %left '?' ':'
 %left OPERATIONBOOL 
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
@@ -36,18 +43,29 @@
 
 %%
 
-resultat:   expression		{ *pT = $1; }
+resultat:   programme		{ *pT = $1; }
 
-expression: 
-    expression '+' expression	{ $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	{ $$ = newBinaryAST('-',$1,$3); }
-  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
-  | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
-  | expression '/' expression	{ $$ = newBinaryAST('/',$1,$3); }
-  | '(' expression ')'		{ $$ = $2; }
-  | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
-  | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
-  | expression '?' expression ':' expression { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
+programme:  
+      commande programme
+    |   %empty
+;
+
+commande: 
+      progression ';'
+    | VARIABLE AFF progression
+    | ';'
+;
+
+progression: 
+    progression '+' progression	{ $$ = newBinaryAST('+',$1,$3); }
+  | progression '-' progression	{ $$ = newBinaryAST('-',$1,$3); }
+  | progression '%' progression	{ $$ = newBinaryAST('%',$1,$3); }
+  | progression '*' progression	{ $$ = newBinaryAST('*',$1,$3); }
+  | progression '/' progression	{ $$ = newBinaryAST('/',$1,$3); }
+  | '(' progression ')'		{ $$ = $2; }
+  | '-' progression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
+  | progression OPERATIONBOOL progression { $$ = newOpeBoolAST($2,$1,$3); }
+  | progression '?' progression ':' progression { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
   | NOMBRE			{ $$ = newLeafAST($1, yylval.valCal); } 
   | BOOLEAN         { $$ = newBooleanAST($1); } 
   ;
