@@ -10,6 +10,11 @@ AST newBinaryAST(char car, AST left, AST right)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
+    // Condition d'ajout de taille pour ne cas - exp  float négatif.
+    if (left && right) t->taille+=1+left->taille+right->taille;
+    if (left && !right) t->taille+=1+left->taille;
+    if (right && !left) t->taille+=1+right->taille;
+    
     t->car=car;
     t->left=left;
     t->right=right;
@@ -22,6 +27,7 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
+    t->taille+=1+left->taille+right->taille;
     t->opeBool=opeBool;
     t->left=left;
     t->right=right;
@@ -33,6 +39,7 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
 AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon) {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
+    t->taille+=2+ifSon->taille + thenSon->taille + elseSon->taille;
     t->car=car1;
     t->car2=car2;
     t->left=ifSon;
@@ -53,6 +60,7 @@ AST newLeafAST(double val, int valCal)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
+    t->taille++;
     t->val=val;
     t->valCal=valCal;
     t->left=NULL;
@@ -66,6 +74,7 @@ AST newBooleanAST(int boolean)
 {  
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
+    t->taille++;
     t->boolean=boolean;
     t->left=NULL;
     t->right=NULL;
@@ -88,6 +97,7 @@ void freeAST(AST t)
 void printAST(AST t)
 {
   if (t!=NULL) {
+    printf("\n-- Taille: %d\n", t->taille);
     printf("[ ");
     printAST(t->left);
     /* check if node is car|val */
