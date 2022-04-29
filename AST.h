@@ -3,6 +3,7 @@
 
 /* unary-and-binary tree structure */
 struct _tree {
+  int taille;
   char car;                    	/* char for arithmetic operation */
   char car2;                    	/* second char for if then else ternaire */
   int opeBool;                    	/* string for boolean operation */
