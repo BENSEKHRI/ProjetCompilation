@@ -37,6 +37,7 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
 
 /* create an AST from a if then else operation and 3 AST sons */
 AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon) {
+  printf("newIfThenElseAST\n");
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
     t->taille+=2+ifSon->taille + thenSon->taille + elseSon->taille;
@@ -97,7 +98,6 @@ void freeAST(AST t)
 void printAST(AST t)
 {
   if (t!=NULL) {
-    printf("\n-- Taille: %d\n", t->taille);
     printf("[ ");
     printAST(t->left);
     /* check if node is car|val */
@@ -164,12 +164,16 @@ void code (AST t) {
           case 1: printf("CsteBo True\n"); break;
           case 2: printf("CsteBo False\n"); break;
           default:  printf("Error boolean\n"); break;
-        } 
+        }         
     }
     else if (t->right == NULL) 
       printf("NegNb\n");
     else {
+      if (t->right && t->ifThenElse) 
+          printf("ConJmp %d\n", t->right->taille+=1);
+
       code(t->right);
+
       if(t->car)
         switch (t->car) {
           case '+': printf("AddiNb\n"); break;
@@ -177,8 +181,8 @@ void code (AST t) {
           case '%': printf("ModuNb\n"); break;  
           case '*': printf("MultNb\n"); break;   
           case '/': printf("DiviNb\n"); break;                                
-          default: printf("unknown\n"); break;
         }
+
       if(t->opeBool)
         switch (t->opeBool) {
           case 1: printf("Equals\n"); break;
@@ -188,6 +192,11 @@ void code (AST t) {
           case 5: printf("GrStNb\n"); break;
           default: printf("unknown\n"); break;
         }
+    
+      if (t->ifThenElse)
+        printf("Jump %d\n", t->ifThenElse->taille);
+
+      code(t->ifThenElse);
     }
   }   
 }
@@ -230,7 +239,14 @@ void echoCodeInFile (AST t, char const *filename) {
         fprintf(f,"NegNb\n");
       }
       else {
+        if (t->right && t->ifThenElse) {
+          fseek(f, 0, SEEK_END);
+          fprintf(f, "ConJmp %d\n", t->right->taille+=1);
+        }
+        
+        fseek(f, 0, SEEK_END);
         echoCodeInFile(t->right, filename);
+        
         if (t->car) {
           fseek(f, 0, SEEK_END);
           switch (t->car) {
@@ -239,10 +255,10 @@ void echoCodeInFile (AST t, char const *filename) {
             case '%': fprintf(f,"ModuNb\n"); break; 
             case '*': fprintf(f,"MultNb\n"); break;  
             case '/': fprintf(f,"DiviNb\n"); break;                                     
-            default: fprintf(f,"unknown\n");
               break;
           }
         }
+
         if(t->opeBool) {
           fseek(f, 0, SEEK_END);
           switch (t->opeBool) {
@@ -254,6 +270,14 @@ void echoCodeInFile (AST t, char const *filename) {
             default: fprintf(f, "unknown\n"); break;
           }
         }
+
+        if (t->ifThenElse) {
+          fseek(f, 0, SEEK_END);
+          fprintf(f,"Jump %d\n", t->ifThenElse->taille);
+        }
+ 
+        fseek(f, 0, SEEK_END);
+        echoCodeInFile(t->ifThenElse, filename);
       }
       fclose(f);
     }
