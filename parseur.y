@@ -8,7 +8,13 @@
 %token NUMBER
 %token BOOLEAN
 %token OPERATIONBOOL
+%token VARIABLE
+%token AFF
+%token ';'
 
+
+%left ';'
+%left AFF
 %left '?' ':'
 %left OPERATIONBOOL 
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
@@ -17,7 +23,19 @@
 
 %%
 
-result: expression
+result: programme
+
+programme:  
+      commande programme
+    |   %empty
+;
+
+
+commande: 
+      expression ';'
+    | VARIABLE AFF expression
+    | ';'
+;
 
 expression:
         expression '+' expression
