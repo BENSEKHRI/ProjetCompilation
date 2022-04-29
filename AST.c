@@ -9,7 +9,11 @@ AST newBinaryAST(char car, AST left, AST right)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
-    t->taille+=left->taille+right->taille;
+    // Condition d'ajout de taille pour ne cas - exp  float négatif.
+    if (left && right) t->taille+=1+left->taille+right->taille;
+    if (left && !right) t->taille+=1+left->taille;
+    if (right && !left) t->taille+=1+right->taille;
+    
     t->car=car;
     t->left=left;
     t->right=right;
@@ -22,19 +26,7 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
-    if (left && right) {
-
-      t->taille+=left->taille+right->taille;
-    }
-    if (left && !right) {
-
-      t->taille+=left->taille;
-    }
-    if (right && !left) {
-
-      t->taille+=right->taille;
-    }
-
+    t->taille+=1+left->taille+right->taille;
     t->opeBool=opeBool;
     t->left=left;
     t->right=right;
@@ -46,7 +38,7 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
 AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon) {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
-    t->taille+=ifSon->taille + thenSon->taille + elseSon->taille;
+    t->taille+=2+ifSon->taille + thenSon->taille + elseSon->taille;
     t->car=car1;
     t->car2=car2;
     t->left=ifSon;
@@ -59,7 +51,6 @@ AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon) 
 /* create an AST from a root value and one AST son */
 AST newUnaryAST(char car, AST son)
 {
-  printf("new unary AST");
   return newBinaryAST(car, son, NULL);
 }
 
@@ -105,7 +96,7 @@ void freeAST(AST t)
 void printAST(AST t)
 {
   if (t!=NULL) {
-    printf("\t-- Taille: %d\n", t->taille);
+    printf("\n-- Taille: %d\n", t->taille);
     printf("[ ");
     printAST(t->left);
     /* check if node is car|val */
