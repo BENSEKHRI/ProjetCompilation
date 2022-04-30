@@ -10,13 +10,15 @@
  #include <stdio.h>	/* printf REMOVE AFTER TEST */
  #include "AST.h"
  int yylex(void);	/* flex with -Wall (implicite call) */
- int yyerror(struct _tree**, const char*); /* same for bison */
+ int yyerror(struct _commande_ast**, const char*); /* same for bison */
 %}
 
-%parse-param {struct _tree* *pT} // yyparse(&t) call => *pT = *(&t) = t 
+%parse-param {struct _commande_ast* *pT} // yyparse(&t) call => *pT = *(&t) = t 
 
 %union {
   struct _tree* exp;
+  struct _commande_ast* com;
+  struct _commande_ast* prog;
   double num;
   int valCal;
   int boolean;
@@ -25,6 +27,8 @@
 } ;
 
 %type  <exp> expression
+%type  <com> commande
+%type  <prog> programme
 %token <num> NOMBRE
 %token <boolean> BOOLEAN
 %token <opeBool> OPERATIONBOOL
@@ -46,14 +50,14 @@
 resultat:   programme		{ *pT = $1; }
 
 programme:  
-      commande programme
-    |   %empty
+      commande programme    { $$ = addComToProg($2,$1); }
+    |   %empty              { $$ = newProgramme(); }       
 ;
 
 commande: 
-      expression ';'
-    | VARIABLE AFF expression
-    | ';'
+    expression ';'              { $$ = newCommanedeExpAST($1,';'); }              
+  | VARIABLE AFF expression ';' { $$ = newCommanedeAffAST($3,$1,'=',';'); }
+  | ';'                         { $$ = newCommanedePVirgAST(';'); }
 ;
 
 expression: 
@@ -62,10 +66,10 @@ expression:
   | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
   | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
   | expression '/' expression	{ $$ = newBinaryAST('/',$1,$3); }
-  | '(' expression ')'		{ $$ = $2; }
+  | '(' expression ')'		    { $$ = $2; }
   | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
-  | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
-  | expression '?' expression ':' expression { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
+  | expression OPERATIONBOOL expression         { $$ = newOpeBoolAST($2,$1,$3); }
+  | expression '?' expression ':' expression    { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
   | NOMBRE			{ $$ = newLeafAST($1, yylval.valCal); } 
   | BOOLEAN         { $$ = newBooleanAST($1); } 
   ;
@@ -73,5 +77,5 @@ expression:
 %%
 
 #include <stdio.h>	/* printf */
-int yyerror(struct _tree **pT, const char *msg){ printf("Parsing:: syntax error\n"); return 1;}
+int yyerror(struct _commande_ast **pT, const char *msg){ printf("Parsing:: syntax error\n"); return 1;}
 int yywrap(void){ return 1; } /* stop reading flux yyin */

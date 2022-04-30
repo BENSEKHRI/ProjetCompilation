@@ -13,28 +13,27 @@ extern FILE* yyin;
 int main(int argc, char const *argv[]) 
 {
     yyin = fopen(argv[1], "r");
-    AST t; 				/* &t allows to modifie the tree */
+    programme_ast p; 				/* &t allows to modifie the tree */
 
     if (yyin != NULL) {     // Avec un fichier en argument 
-        if (yyparse(&t)==0) { 		/* yyparse calls yylex */
+        if (yyparse(&p)==0) { 		/* yyparse calls yylex */
             printf("\nParsing:: syntax OK\n\n");/* reached if parsing folllows the grammar */
             
             /* print the obtained tree */
-            if (t->left!=NULL) printf("Root symbol:: %c\n", t->car);	/* check if car at root */
-            printAST(t); printf("\n");
-                    
-            freeAST(t);
+            if (p->expression->left!=NULL) printf("Root symbol:: %c\n", p->expression->car);	/* check if car at root */
+            printProg(p); printf("\n");
+                            
+            freeProg(p);
         } 
         fclose(yyin); // On ferme le fichier qui a été ouvert
     } else {                // Sans fichier en argument
-        if (yyparse(&t)==0) {                      // call to the parsing (and lexing) function
+        if (yyparse(&p)==0) {                      // call to the parsing (and lexing) function
             printf("\nParsing:: syntax OK\n\n");/* reached if parsing folllows the grammar */
             
             /* print the obtained tree */
-            if (t->left!=NULL) printf("Root symbol:: %c\n", t->car);	/* check if car at root */
-            printAST(t); printf("\n");
-                    
-            freeAST(t);        }
+            if (p->expression->left!=NULL) printf("Root symbol:: %c\n", p->expression->car);	/* check if car at root */
+            printProg(p); printf("\n");
+            freeProg(p);        }
     }
 
     exit(EXIT_SUCCESS);

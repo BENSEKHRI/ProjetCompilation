@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "AST.h"
 #include <string.h>	     /* Manipulation de chaine de caractères */
+#include "AST.h"
 
+
+
+/*-----------------------------------------------.
+|                AST - expression                |
+`-----------------------------------------------*/
 
 /* create an AST from a root value and two AST sons */
 AST newBinaryAST(char car, AST left, AST right)
@@ -96,7 +101,6 @@ void freeAST(AST t)
 void printAST(AST t)
 {
   if (t!=NULL) {
-    printf("\n-- Taille: %d\n", t->taille);
     printf("[ ");
     printAST(t->left);
     /* check if node is car|val */
@@ -140,3 +144,182 @@ void printAST(AST t)
   }
 }
 
+
+
+/*-----------------------------------------------.
+|                AST - commande                  |
+`-----------------------------------------------*/
+
+/**
+ * @brief   Cette fonction permet de créer une commande à partir d'une expression et d'un point virgule ';'
+ *          expression ';'
+ * 
+ * @param expression l'AST de l'expression.
+ * @param pVirg le point virgule de la fin de l'expression
+ * @return commande_ast la commande créee.
+ */
+commande_ast newCommanedeExpAST(AST expression, char pVirg) {
+  commande_ast c =(struct _commande_ast*) malloc(sizeof(struct _commande_ast));
+  if (c!=NULL){	/* malloc ok */
+    c->expression = expression;
+    c->pVirg = pVirg;
+  } else printf("MALLOC! ");
+  return c;
+}
+
+
+/**
+ * @brief   Cette fonction premet de créer une commande à partir d'une affectation.
+ *          VARIABLE AFF expression
+ * 
+ * @param expression l'AST de l'expression.
+ * @param var La variable.
+ * @param aff le = de l'affectation
+ * @param pVirg le point virgule de la fin de l'expression
+ * @return commande_ast la commande créee.
+ */
+commande_ast newCommanedeAffAST(AST expression, char* var, char aff, char pVirg) {
+  commande_ast c =(struct _commande_ast*) malloc(sizeof(struct _commande_ast));
+  if (c!=NULL){	/* malloc ok */
+    c->var = var;
+    c->aff = aff;
+    c->pVirg = pVirg;
+    c->expression = expression;
+  } else printf("MALLOC! ");
+  return c;
+}
+
+
+/**
+ * @brief   Cette fonction permet de créer une commande à partir d'un point virgule ';'
+ * 
+ * @param pVirg le point virgule de la fin de l'expression
+ * @return commande_ast la commande créee.
+ */
+commande_ast newCommanedePVirgAST(char pVirg) {
+  commande_ast c =(struct _commande_ast*) malloc(sizeof(struct _commande_ast));
+  if (c!=NULL){	/* malloc ok */
+    c->pVirg = pVirg;
+    c->expression = newBinaryAST(pVirg, NULL, NULL);
+  } else printf("MALLOC! ");
+  return c;
+}
+
+
+/**
+ * @brief   Cette fonction permet de libérer la mémoire allouée par une commande
+ * 
+ * @param c La commande.
+ */
+void freeCommande(commande_ast c) {
+  if (c!=NULL) {
+    freeAST(c->expression);
+    free(c->var);
+    free(c);
+  }
+}
+
+
+/**
+ * @brief   Cette fonction permet d'afficher une commande.
+ *          Une commande est afficher une deux '|' ainsi:  |commande |
+ * 
+ * @param c la commande à afficher.
+ */
+void printCommande(commande_ast c) {
+  if (c!=NULL) {
+    printf("| ");
+    if (c->expression) {
+      if (c->var) {
+        printf(":%s: ", c->var);
+        printf(":%c: ", c->aff);
+        printAST(c->expression);  
+        printf(":%c: ", c->pVirg);
+      } else {
+        printAST(c->expression);  
+        printf(":%c: ", c->pVirg);
+      }      
+    } else
+        printf(":%c: ", c->pVirg);
+    printf("| ");
+  }
+}
+
+
+
+/*-----------------------------------------------.
+|                   Programme                    |                  
+`-----------------------------------------------*/
+
+/**
+ * @brief   Cette fonction permet d'initialiser un programme vide.
+ *          - Le programme est une liste de commandes.
+ * 
+ * @return programme_ast le programme initial.
+ */
+programme_ast newProgramme () {
+  programme_ast p = NULL;
+  return p;
+}
+
+
+/**
+ * @brief   Cette fonction permet d'ajouter une commande à la fin d'un programme.
+ * 
+ * @param prog Le programme auquel on ajoute la commande.
+ * @param newCommande La commande a ajotuer
+ * @return programme_astle prgramme après ajout de la commande
+ */
+programme_ast addComToProg (programme_ast prog, commande_ast newCommande) {
+  if (newCommande) {
+    newCommande->suivant = NULL;
+
+    if (!prog) 
+      return newCommande;  
+    else {
+      newCommande->suivant = prog;
+      return newCommande;
+    }
+  } else {
+    printf("Error - addComToProg\n");
+    exit(EXIT_FAILURE);
+  }
+}
+
+
+/**
+ * @brief   Cette fonction permet de libérer la mémoire alloué par un programme.
+ * 
+ * @param prog Le programme.
+ */
+void freeProg(programme_ast prog) {
+  if (prog!=NULL) {
+    commande_ast commandeSuivante = NULL;
+    while (prog) {
+      commandeSuivante = prog->suivant;
+      freeCommande(prog);
+      prog = commandeSuivante;
+    }
+  }
+}
+
+
+/**
+ * @brief   Cette fontion permet d'afficher un programme.
+ * 
+ * @param prog le programme à afficher.
+ */
+void printProg(programme_ast prog) {
+  if (prog) { 
+    printf("Program:\n");
+    commande_ast tmpCommande = prog;
+    while (tmpCommande) {
+      printCommande(tmpCommande);
+      printf("\n");
+      tmpCommande = tmpCommande->suivant;
+    }
+  } else {
+    printf("Error - printProg - Liste vide !\n");
+    exit(EXIT_FAILURE);
+  }
+}
