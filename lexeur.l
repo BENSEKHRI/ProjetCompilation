@@ -45,14 +45,16 @@
 
 %%
 
-0|[1-9][0-9]*  	                        { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 1; return NOMBRE; } 
-[0-9]*\.[0-9]+  	                    { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 2; return NOMBRE;}
-[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?       { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 3; return NOMBRE;}
-NaN                                     { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 4; return NOMBRE;}
-True|False             { printf("lex::BOOLEAN %s\n",yytext); yylval.boolean=strToBool(yytext); return BOOLEAN; }  
-==|\<=|>=|<|>          { printf("lex::OPERATIONBOOL %s\n",yytext); yylval.opeBool=strToOpeBool(yytext); return OPERATIONBOOL; }  
-[ \t\n] 	    { ; } /* ignore space, tab, and line return */
-[;]             { return 0; } // exit sucessfully
-. 		        { printf("lex::char %s\n",yytext); return yytext[0]; } /* other one-char = token, ex. '+' */
+0|[1-9][0-9]*  	                    { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 1; return NOMBRE; } 
+[0-9]*\.[0-9]+  	                { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 2; return NOMBRE;}
+[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?   { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 3; return NOMBRE;}
+NaN                                 { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 4; return NOMBRE;}
+True|False                          { printf("lex::BOOLEAN %s\n",yytext); yylval.boolean=strToBool(yytext); return BOOLEAN; }  
+==|\<=|>=|<|>                       { printf("lex::OPERATIONBOOL %s\n",yytext); yylval.opeBool=strToOpeBool(yytext); return OPERATIONBOOL; }  
+[a-zA-Z_][a-zA-Z0-9_]*              { printf("lex::VARIABLE %s\n",yytext); yylval.var = strdup(yytext); return VARIABLE;}
+=							        { printf("lex::AFF %s\n", yytext); return AFF;} 
+[ \t\n] 	                        { ; } /* ignore space, tab, and line return */
+[€]                                 { return 0; } // exit sucessfully
+. 		                            { printf("lex::char %s\n",yytext); return yytext[0]; } /* other one-char = token, ex. '+' */
 
 %%
