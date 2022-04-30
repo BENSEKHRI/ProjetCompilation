@@ -150,9 +150,9 @@ void printAST(AST t)
  * 
  * @param t l'AST
  */
-void code (AST t) {
+void codeAST (AST t) {
   if (t!=NULL) {   
-    code(t->left);
+    codeAST(t->left);
     if (t->left==NULL) {
       if(t->val)
         switch (t->valCal) {
@@ -176,7 +176,7 @@ void code (AST t) {
       if (t->right && t->ifThenElse) 
           printf("ConJmp %d\n", t->right->taille+=1);
 
-      code(t->right);
+      codeAST(t->right);
 
       if(t->car)
         switch (t->car) {
@@ -200,7 +200,7 @@ void code (AST t) {
       if (t->ifThenElse)
         printf("Jump %d\n", t->ifThenElse->taille);
 
-      code(t->ifThenElse);
+      codeAST(t->ifThenElse);
     }
   }   
 }
@@ -211,12 +211,12 @@ void code (AST t) {
  * @param t AST
  * @param filename nom du fichier qui contiendera la sortie post fixe de l'AST 
  */
-void echoCodeInFile (AST t, char const *filename) {
+void echoCodeASTInFile (AST t, char const *filename) {
   FILE* f = fopen(filename, "r+");
   if (f != NULL) {
     fseek(f, 0, SEEK_END);
     if (t != NULL) {
-      echoCodeInFile(t->left, filename);
+      echoCodeASTInFile(t->left, filename);
       if (t->left==NULL) {
         if(t->val) {
           fseek(f, 0, SEEK_END);
@@ -249,7 +249,7 @@ void echoCodeInFile (AST t, char const *filename) {
         }
         
         fseek(f, 0, SEEK_END);
-        echoCodeInFile(t->right, filename);
+        echoCodeASTInFile(t->right, filename);
         
         if (t->car) {
           fseek(f, 0, SEEK_END);
@@ -281,7 +281,7 @@ void echoCodeInFile (AST t, char const *filename) {
         }
  
         fseek(f, 0, SEEK_END);
-        echoCodeInFile(t->ifThenElse, filename);
+        echoCodeASTInFile(t->ifThenElse, filename);
       }
       fclose(f);
     }

@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
         printf("/*----------------.\n");
         printf("|    POST-FIXE    |\n");
         printf("`----------------*/\n");
-        code(t); printf("Halt\n");
+        codeAST(t); printf("Halt\n");
       }
     } else { // execution sans argument
       printf("\n/*----------.\n");
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
       printf("/*----------------.\n");
       printf("|    POST-FIXE    |\n");
       printf("`----------------*/\n");
-      code(t); printf("Halt\n");
+      codeAST(t); printf("Halt\n");
     }
     
     freeAST(t);

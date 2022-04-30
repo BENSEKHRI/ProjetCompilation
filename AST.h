@@ -65,10 +65,10 @@ void freeAST(AST t);
 void printAST(AST t);
 
 /* print post-fix an AST*/
-void code (AST t);
+void codeAST (AST t);
 
 /* write a post-fix AST in a file*/
-void echoCodeInFile (AST t, char const *filename);
+void echoCodeASTInFile (AST t, char const *filename);
 
 
 
@@ -88,9 +88,14 @@ commande_ast newCommanedePVirgAST(char aff_pVirg);
 /* delete a command */
 void freeCommande(commande_ast c);
 
-/* print a program*/
+/* print a command*/
 void printCommande(commande_ast c);
 
+/* print post-fix a command*/
+void codeCommande (commande_ast c);
+
+/* write a post-fix command in a file*/
+void echoCodeCommandeInFile (commande_ast c, char const *filename);
 
 
 /*-----------------------------------------------.
