@@ -33,7 +33,6 @@ programme:
 
 commande: 
       expression ';'
-    | VARIABLE AFF expression
     | ';'
 ;
 
@@ -48,6 +47,8 @@ expression:
     |   expression '?' expression ':' expression
     |   NUMBER
     |   BOOLEAN
+    |   VARIABLE
+    |   VARIABLE AFF expression
 ;
 
 
