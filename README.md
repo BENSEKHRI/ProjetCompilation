@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement p0.1
+# Compilateur JavaScript    -   Fragement p0.2
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -46,27 +46,30 @@ Vous pouvez exécuter le projet sur un fichier js existant directement, et celui
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement p0.0 plus ce qui suit:
+Tous les tests du fragement p0.0 et p0.1 plus ce qui suit:
 
-* une opération modulo (_ % _ ) :
-12%12;
+* On peut utiliser True et False comme expressions constantes + ajout de opérateur binaire (_ == _) qui prend deux nombres et produit un boolèen + la négation (! _) + les opérateur < > <= => + Respect des des priorités et de l'associativité:
+
+!False == (12>=12-12.4); 
+lex::char !
+lex::BOOLEAN False
+lex::OPERATIONBOOL ==
+lex::char (
 lex::NUMBER 12
-lex::char %
+lex::OPERATIONBOOL >=
 lex::NUMBER 12
-
-Parsing:: syntax OK
-
-* Les nombres peuvent maintenant être des flottants quelconques. Pour l'instant, ils ont que la notation des nombres entiers :
-3.4;
-lex::NUMBER 3.4
-
-Parsing:: syntax OK
-
-
--1.2;
 lex::char -
-lex::NUMBER 1.2
+lex::NUMBER 12.4
+lex::char )
 
 Parsing:: syntax OK
 
 
+
+True == !False; 
+lex::BOOLEAN True
+lex::OPERATIONBOOL ==
+lex::char !
+lex::BOOLEAN False
+
+Parsing:: syntax OK
