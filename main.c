@@ -16,7 +16,7 @@ int modifyExtensionJs(char const *str);
 
 int main(int argc, char *argv[])
 {
-    AST t; /* &t allows to modifie the tree */
+    programme_ast prog; /* &prog allows to modifie the tree */
 
     if (argv[1])
     { // execution avec argument
@@ -25,15 +25,15 @@ int main(int argc, char *argv[])
         {                                        // Le fichier existe
             if (modifyExtensionJs(argv[1]) == 1) // fichier js en argument
             {
-                if ((yyparse(&t) == 0))
+                if ((yyparse(&prog) == 0))
                 {                                        /* yyparse calls yylex */
                     printf("\nParsing:: syntax OK\n\n"); /* reached if parsing folllows the grammar */
 
                     /* print the obtained tree */
-                    if (t->left != NULL)
-                        printf("Root symbol:: %c\n", t->car); /* check if car at root */
+                    if (prog->expression->left != NULL)
+                        printf("Root symbol:: %c\n", prog->expression->car); /* check if car at root */
 
-                    echoCodeInFile(t, argv[1]);
+                    writeCodeProgInFile(prog, argv[1]);
                     printf("\n/*-------------------------------------.\n");
                     printf("|    Writing the file %s    |\n", argv[1]);
                     printf("`-------------------------------------*/\n");
@@ -53,9 +53,9 @@ int main(int argc, char *argv[])
                     printf("\n/*----------.\n");
                     printf("|    AST    |\n");
                     printf("`----------*/\n");
-                    printAST(t);
+                    printProg(prog);
                     printf("\n\n");
-                    freeAST(t);
+                    freeProg(prog);
                 }
                 exit(EXIT_SUCCESS);
             }
@@ -79,30 +79,30 @@ int main(int argc, char *argv[])
     }
     else
     { // execution sans argument
-        if ((yyparse(&t) == 0))
+        if ((yyparse(&prog) == 0))
         {                                        /* yyparse calls yylex */
             printf("\nParsing:: syntax OK\n\n"); /* reached if parsing folllows the grammar */
 
             /* print the obtained tree */
-            if (t->left != NULL)
-                printf("Root symbol:: %c\n", t->car); /* check if car at root */
+            if (prog->expression->left != NULL)
+                printf("Root symbol:: %c\n", prog->expression->car); /* check if car at root */
             printf("\n/*----------.\n");
             printf("|    AST    |\n");
             printf("`----------*/\n");
-            printAST(t);
+            printProg(prog);
             printf("\n\n");
 
             printf("/*----------------.\n");
             printf("|    POST-FIXE    |\n");
             printf("`----------------*/\n");
-            code(t);
+            codeProg(prog);
             printf("Halt\n");
-            freeAST(t);
+            freeProg(prog);
         }
         exit(EXIT_SUCCESS);
     }
     
-    freeAST(t);
+    freeProg(prog);
     exit(EXIT_SUCCESS);
 }
 

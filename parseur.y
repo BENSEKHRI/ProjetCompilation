@@ -16,9 +16,9 @@
 %parse-param {struct _commande_ast* *pT} // yyparse(&t) call => *pT = *(&t) = t 
 
 %union {
-  struct _tree* exp;
-  struct _commande_ast* com;
   struct _commande_ast* prog;
+  struct _commande_ast* com;
+  struct _tree* exp;
   double num;
   int valCal;
   int boolean;
@@ -26,28 +26,28 @@
   char* var;
 } ;
 
-%type  <exp> expression
-%type  <com> commande
 %type  <prog> programme
+%type  <com> commande
+%type  <exp> expression
 %token <num> NOMBRE
 %token <boolean> BOOLEAN
 %token <opeBool> OPERATIONBOOL
-%token <var> VARIABLE
+%token <var> IDENT
 %token AFF
 %token ';'
 
 
 %left ';'
 %left AFF
-%left '!'
-%left OPERATIONBOOL 
 %left '?' ':'
-%left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
+%left OPERATIONBOOL 
+%left '+' '-'           // Le + et - sont prioritaire sur les opération booléen 
 %left '*' '%' 
 %nonassoc UMOINS
 
 
 %%
+
 
 resultat:   programme		{ *pT = $1; }
 
@@ -57,24 +57,24 @@ programme:
 ;
 
 commande: 
-    expression ';'              { $$ = newCommanedeExpAST($1,';'); }              
-  | ';'                         { $$ = newCommanedePVirgAST(';'); }
+    expression ';'              { $$ = newCommandeExpAST($1,';'); }              
+  | ';'                         { $$ = newCommandePVirgAST(';'); }
 ;
 
 expression: 
     expression '+' expression	                { $$ = newBinaryAST('+',$1,$3); }
   | expression '-' expression	                { $$ = newBinaryAST('-',$1,$3); }
-  | expression '%' expression	                { $$ = newBinaryAST('%',$1,$3); }
   | expression '*' expression	                { $$ = newBinaryAST('*',$1,$3); }
+  | expression '%' expression	                { $$ = newBinaryAST('%',$1,$3); }
   | '(' expression ')'		                    { $$ = $2; }
   | '-' expression %prec UMOINS	                { $$ = newUnaryAST('-',$2); }
   | OPERATIONBOOL expression                    { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
   | expression OPERATIONBOOL expression         { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
   | expression '?' expression ':' expression    { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
+  | IDENT AFF expression                        { $$ = newAffAST($1,'=',$3); }
   | NOMBRE			                            { $$ = newLeafAST($1, yylval.valCal); } 
-  | VARIABLE			                        { $$ = newVariableAST($1); } 
+  | IDENT			                            { $$ = newVariableAST($1); } 
   | BOOLEAN                                     { $$ = newBooleanAST($1); } 
-  | VARIABLE AFF expression                     { $$ = newAffAST($1,'=',$3); }
   ;
 
 %%
