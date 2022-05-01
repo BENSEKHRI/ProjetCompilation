@@ -16,12 +16,12 @@
 result: expression
 
 expression:
-        expression '+' expression
-    |   expression '-' expression
-    |   expression '*' expression
-    |   '(' expression ')'
-    |   '-' expression %prec UMOINS
-    |   NUMBER
+    '(' expression ')'
+  | expression '+' expression
+  | expression '-' expression
+  | expression '*' expression
+  | '-' expression %prec UMOINS
+  | NUMBER
 ;
 
 
