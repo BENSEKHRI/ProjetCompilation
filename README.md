@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement p1.3
+# Compilateur JavaScript    -   Fragement p2.0
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -46,27 +46,10 @@ Vous pouvez exécuter le projet sur un fichier js existant directement, et celui
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement p0, p1.0, p1.1 et p1.2 plus ce qui suit:
+Tous les tests du fragement p0, p1 plus ce qui suit:
 
-* Les booléens "or" et "and" => "||" et "&&" :
-
-12?12||12:True&&False;
-lex::NUMBER 12
-lex::char ?
-lex::NUMBER 12
-lex::OPERATIONBOOL ||
-lex::NUMBER 12
-lex::char :
-lex::BOOLEAN True
-lex::OPERATIONBOOL &&
-lex::BOOLEAN False
-
-Parsing:: syntax OK
-
-
-
-!12||12;
-lex::char !
-lex::NUMBER 12
-lex::OPERATIONBOOL ||
-lex::NUMBER 12
+_ Les variables commencent par une lettre minuscule et peuvent être composées de lettres, de chiffres, de caractères de soulignement "_".
+— Les variables ne doivent pas être déclarées.
+— Les variables sont instanciées par l'expression 5 x = expr ; où expr est une expression quelconque. Ces variables sont toujours globales.
+— Respecter les priorités et l'associativité !
+— Les variables peuvent être utilisées à l'intérieur des expressions.
