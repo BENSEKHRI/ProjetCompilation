@@ -69,15 +69,13 @@ AST newBooleanAST(int boolean)
 /* create an AST from a root value and two AST sons */
 AST newOpeBoolAST(int opeBool, AST left, AST right)
 {
-  AST t = (struct _tree *)malloc(sizeof(struct _tree));
-  if (t != NULL)
-  { /* malloc ok */
-    t->opeBool = opeBool;
-    t->left = left;
-    t->right = right;
-  }
-  else
-    printf("MALLOC! ");
+  AST t=(struct _tree*) malloc(sizeof(struct _tree));
+  if (t!=NULL){	/* malloc ok */
+    t->taille+=1+left->taille+right->taille;
+    t->opeBool=opeBool;
+    t->left=left;
+    t->right=right;
+  } else printf("MALLOC! ");
   return t;
 }
 
@@ -244,7 +242,7 @@ void code(AST t)
     }
     else if (t->right == NULL)
     {
-      if (t->opeBool)
+      if (t->opeBool) 
         printf("Not\n");
       else
         printf("NegNb\n");
