@@ -16,9 +16,6 @@ typedef struct _tree* AST;
 /* create an AST from a root value and two AST sons */
 AST newBinaryAST(char car, AST left, AST right);
 
-/* create an AST from a boolean operation and two AST sons */
-AST newOpeBoolAST(int opeBool, AST left, AST right);
-
 /* create an AST from a root value and one AST son */
 AST newUnaryAST(char car, AST son);
 
@@ -27,6 +24,9 @@ AST newLeafAST(double val);
 
 /* create an AST leaf from a boolean */
 AST newBooleanAST(int boolean);
+
+/* create an AST from a boolean operation and two AST sons */
+AST newOpeBoolAST(int opeBool, AST left, AST right);
 
 /* delete an AST */
 void freeAST(AST t);
