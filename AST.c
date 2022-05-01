@@ -48,10 +48,10 @@ void printAST(AST t)
 {
   if (t!=NULL) {
     printf("[ ");
-    printAST(t->right);
+    printAST(t->left);
     /* check if node is car|val */
     if (t->left==NULL) printf(":%d: ",t->val); else printf(":%c: ",t->car);
-    printAST(t->left);
+    printAST(t->right);
     printf("] ");
   }
 }

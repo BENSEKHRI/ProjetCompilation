@@ -72,6 +72,7 @@ CsteNb 12
 Halt
 
 
+
 -12;
 lex::char -
 lex::NOMBRE 12
@@ -106,7 +107,7 @@ Root symbol:: +
 /*----------.
 |    AST    |
 `----------*/
-[ [ :9: ] :+: [ :1: ] ] 
+[ [ :1: ] :+: [ :9: ] ] 
 
 /*----------------.
 |    POST-FIXE    |
@@ -122,14 +123,124 @@ lex::char x
 Parsing:: syntax error
 
 * Un programme ne peut être que de la forme " expression ; "
+2+3+5;
+lex::NOMBRE 2
+lex::char +
+lex::NOMBRE 3
+lex::char +
+lex::NOMBRE 5
+
+Parsing:: syntax OK
+
+Root symbol:: +
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ [ :2: ] :+: [ :3: ] ] :+: [ :5: ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 2
+CsteNb 3
+AddiNb
+CsteNb 5
+AddiNb
+Halt
+
+
+
 2*(3+2);
-lex::NUMBER 2
+lex::NOMBRE 2
 lex::char *
 lex::char (
-lex::NUMBER 3
+lex::NOMBRE 3
 lex::char +
-lex::NUMBER 2
+lex::NOMBRE 2
 lex::char )
 
 Parsing:: syntax OK
 
+Root symbol:: *
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :2: ] :*: [ [ :3: ] :+: [ :2: ] ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 2
+CsteNb 3
+CsteNb 2
+AddiNb
+MultNb
+Halt
+
+
+
+2+3*2;
+lex::NOMBRE 2
+lex::char +
+lex::NOMBRE 3
+lex::char *
+lex::NOMBRE 2
+
+Parsing:: syntax OK
+
+Root symbol:: +
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :2: ] :+: [ [ :3: ] :*: [ :2: ] ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 2
+CsteNb 3
+CsteNb 2
+MultNb
+AddiNb
+Halt
+
+
+Des tests ont été bien sûr effectué sur l'écriture directement en fichier.jsm.
+
+Et aussi des tests par rapport au résultats obtenues si il est lisible est compréhensible par la machine js.
+
+Voici un exemple:
+dans un fichier js:
+--12 * 30 + 12--12 * (3 + 12)
+
+dans le fichier jsm:
+CsteNb 12
+NegNb
+NegNb
+CsteNb 30
+MultNb
+CsteNb 12
+AddiNb
+CsteNb 12
+NegNb
+CsteNb 3
+CsteNb 12
+AddiNb
+MultNb
+SubiNb
+Halt
+
+Le résultat de la machine JS:
+...
+...
+...
+Voici la fin :
+PC : 14
+Pile : [552 ]
+Contexte : |
+Instruction : Halt
+
+Programme exécuté avec succes 

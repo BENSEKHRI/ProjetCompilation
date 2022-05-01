@@ -53,7 +53,9 @@ int main(int argc, char *argv[])
                     printf("`----------*/\n");
                     printAST(t);
                     printf("\n\n");
+                    freeAST(t);
                 }
+                exit(EXIT_SUCCESS);
             }
             else
             { // fichier non js en argument
@@ -93,9 +95,11 @@ int main(int argc, char *argv[])
             printf("`----------------*/\n");
             code(t);
             printf("Halt\n");
+            freeAST(t);
         }
+        exit(EXIT_SUCCESS);
     }
-
+    
     freeAST(t);
     exit(EXIT_SUCCESS);
 }
