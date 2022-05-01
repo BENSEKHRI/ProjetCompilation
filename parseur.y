@@ -43,7 +43,7 @@ expression:
   | expression '%' expression	          { $$ = newBinaryAST('%',$1,$3); }
   | '(' expression ')'		              { $$ = $2; }
   | '-' expression %prec MOINSU	        { $$ = newUnaryAST('-',$2); }
-  | OPERATIONBOOL expression            { $$ = newOpeBoolAST(6,$2, NULL); }
+  | OPERATIONBOOL expression            { if($1 != 6){printf("Parsing:: syntax error\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
   | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
   | NOMBRE			                        { $$ = newLeafAST($1); } 
   | BOOLEAN                             { $$ = newBooleanAST($1); } 
