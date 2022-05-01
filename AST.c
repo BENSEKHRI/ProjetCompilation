@@ -21,7 +21,7 @@ AST newBinaryAST(char car, AST left, AST right)
 /* create an AST from a root value and one AST son */
 AST newUnaryAST(char car, AST son)
 {
-  return newBinaryAST(car, NULL, son);
+  return newBinaryAST(car, son, NULL);
 }
 
 /* create an AST leaf from a value */
@@ -62,11 +62,11 @@ void printAST(AST t)
     {
       if (t->val)
         printf(":%d: ", t->val);
+    }
+    else {
       if (t->car)
         printf(":%c: ", t->car);
     }
-    else if (t->car)
-      printf(":%c: ", t->car);
     printAST(t->right);
     printf("] ");
   }
