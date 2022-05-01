@@ -76,3 +76,19 @@ Parsing:: syntax OK
 lex::NUMBER 12
 lex::char :
 Parsing:: syntax error
+
+
+
+False?12+12*5:!True;
+lex::BOOLEAN False
+lex::char ?
+lex::NUMBER 12
+lex::char +
+lex::NUMBER 12
+lex::char *
+lex::NUMBER 5
+lex::char :
+lex::char !
+lex::BOOLEAN True
+
+Parsing:: syntax OK

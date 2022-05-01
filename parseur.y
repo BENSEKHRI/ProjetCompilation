@@ -13,7 +13,7 @@
 %left '!'
 %left OPERATIONBOOL 
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
-%left '%' '*'
+%left '*' '%' 
 %nonassoc UMOINS
 
 %%
