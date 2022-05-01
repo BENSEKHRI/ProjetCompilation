@@ -1,4 +1,4 @@
-# Compilateur JavaScript - Fragement c1.0
+# Compilateur JavaScript - Fragement c1.1
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -48,49 +48,25 @@ Vous pouvez exécuter le projet sur un fichier js existant directement, et celui
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement c0.0, c0.1 et c0.2 plus ce qui suit:
+Tous les tests du fragement c0.0, c0.1, c0.2 et c1.0 plus ce qui suit:
 
-* Les nombres peuvent être écrits 1.215e25 ou .485e-42 ou 485e-42. Nous ajoutons également la constante NaN :
+* Ajout des commentaires :
 
-1.215e25+.485e-42*12.12-NaN==False==!True;
-lex::NOMBRE 1.215e25
-lex::char +
-lex::NOMBRE .485e-42
-lex::char *
-lex::NOMBRE 12.12
-lex::char -
-lex::NOMBRE NaN
-lex::OPERATIONBOOL ==
-lex::BOOLEAN False
-lex::OPERATIONBOOL ==
-lex::OPERATIONBOOL !
-lex::BOOLEAN True
+/** 12 */;
+lex::NOMBRE 12
 
 Parsing:: syntax OK
 
-Root symbol:: 
 
 /*----------.
 |    AST    |
 `----------*/
-[ [ [ [ [ :1.21e+25: ] :+: [ [ :4.85e-43: ] :*: [ :12.12: ] ] ] :-: [ :NaN: ] ] :==: [ :False: ] ] :==: [ [ :True: ] :!: ] ] 
+[ :12: ] 
 
 /*----------------.
 |    POST-FIXE    |
 `----------------*/
-CsteNb 1.21e+25
-CsteNb 4.85e-43
-CsteNb 12.12
-MultNb
-AddiNb
-CsteNb NaN
-SubiNb
-CsteBo False
-Equals
-CsteBo True
-Not
-Equals
+CsteNb 12
 Halt
 
-
-Des tests ont bien sûr été effectué via fichier js en arguments.
+Il ignore bien le /* et */ mais ce qu'il y a a l'interieur.

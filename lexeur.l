@@ -53,7 +53,7 @@
 NaN                             { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 4; return NOMBRE;}
 True|False                      { printf("lex::BOOLEAN %s\n",yytext); yylval.boolean=strToBool(yytext); return BOOLEAN; }  
 ==|\<=|>=|<|>|!                 { printf("lex::OPERATIONBOOL %s\n",yytext); yylval.opeBool=strToOpeBool(yytext); return OPERATIONBOOL; }  
-[ \t\n] 	                    { ; } /* ignore space, tab, and line return */
+[ \t\n]|[/\*a-z*A-Z*0-9**/] 	{ ; } /* ignore space, tab, and line return and comments*/
 [;]                             { return 0; } // exit sucessfully
 . 		                        { printf("lex::char %s\n",yytext); return yytext[0]; } /* other one-char = token, ex. '+' */
 
