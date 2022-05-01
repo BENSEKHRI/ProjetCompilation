@@ -83,6 +83,18 @@ AST newBooleanAST(int boolean)
   return t;
 }
 
+/* create an AST from a root value and two AST sons */
+AST newOpeBoolAST(int opeBool, AST left, AST right)
+{
+  AST t=(struct _tree*) malloc(sizeof(struct _tree));
+  if (t!=NULL){	/* malloc ok */
+    t->opeBool=opeBool;
+    t->left=left;
+    t->right=right;
+  } else printf("MALLOC! ");
+  return t;
+}
+
 /* delete an AST */
 void freeAST(AST t)
 {
@@ -128,7 +140,8 @@ void printAST(AST t)
           case 3: printf(":>=: "); break;
           case 4: printf(":<: "); break;
           case 5: printf(":>: "); break;
-          default: printf("Error Boolean Operation\n"); break;
+          case 6: printf(":!: "); break;
+          default: printf("Error boolean operation\n"); break;
         }
     }
     printAST(t->right);
@@ -166,8 +179,12 @@ void code (AST t) {
           default:  printf("Error boolean\n"); break;
         }         
     }
-    else if (t->right == NULL) 
-      printf("NegNb\n");
+    else if (t->right == NULL) {
+      if (t->opeBool)
+        printf("Not\n");
+      else
+        printf("NegNb\n");
+    }
     else {
       if (t->right && t->ifThenElse) 
           printf("ConJmp %d\n", t->right->taille+=1);
@@ -180,7 +197,6 @@ void code (AST t) {
           case '-': printf("SubiNb\n"); break;
           case '%': printf("ModuNb\n"); break;  
           case '*': printf("MultNb\n"); break;   
-          case '/': printf("DiviNb\n"); break;                                
         }
 
       if(t->opeBool)
@@ -190,7 +206,6 @@ void code (AST t) {
           case 3: printf("GrEqNb\n"); break;
           case 4: printf("LoStNb\n"); break;
           case 5: printf("GrStNb\n"); break;
-          default: printf("unknown\n"); break;
         }
     
       if (t->ifThenElse)
@@ -236,7 +251,10 @@ void echoCodeInFile (AST t, char const *filename) {
       } 
       else if (t->right == NULL) {
         fseek(f, 0, SEEK_END);
-        fprintf(f,"NegNb\n");
+        if(t->opeBool)
+          fprintf(f, "Not\n");
+        else 
+          fprintf(f,"NegNb\n");
       }
       else {
         if (t->right && t->ifThenElse) {
@@ -254,8 +272,6 @@ void echoCodeInFile (AST t, char const *filename) {
             case '-': fprintf(f,"SubiNb\n"); break;
             case '%': fprintf(f,"ModuNb\n"); break; 
             case '*': fprintf(f,"MultNb\n"); break;  
-            case '/': fprintf(f,"DiviNb\n"); break;                                     
-              break;
           }
         }
 
@@ -267,7 +283,6 @@ void echoCodeInFile (AST t, char const *filename) {
             case 3: fprintf(f, "GrEqNb\n"); break;
             case 4: fprintf(f, "LoStNb\n"); break;
             case 5: fprintf(f, "GrStNb\n"); break;
-            default: fprintf(f, "unknown\n"); break;
           }
         }
 
