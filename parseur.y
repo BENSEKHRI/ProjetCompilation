@@ -39,11 +39,13 @@
 
 %left ';'
 %left AFF
-%left '?' ':'
+%left '!'
 %left OPERATIONBOOL 
+%left '?' ':'
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
-%left '%' '*' '/'
-%nonassoc MOINSU
+%left '*' '%' 
+%nonassoc UMOINS
+
 
 %%
 
