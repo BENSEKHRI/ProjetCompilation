@@ -48,7 +48,99 @@ Vous pouvez exécuter le projet sur un fichier js existant directement, et celui
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement c0.0, c0.1, c0.2 et c1.0 plus ce qui suit:
+Tous les tests du fragement c0.0, c0.1, c0.2, c1.0 et c1.1 plus ce qui suit:
 
-* L'opérateur ternaire _ ? _ : _
+* L'opérateur ternaire _ ? _ : _ qui évalue le premier, si c'est un booléen l'opérateur exécute le code du deuxième argument, sinon il exécute le code du troisième argument : c'est comme un if_then_else mais à l'intérieur des expressions. Instructions de montage supplémentaires autorisées: Jump, ConJmp.
+
+
+True?12+5*2:!False;
+lex::BOOLEAN True
+lex::char ?
+lex::NOMBRE 12
+lex::char +
+lex::NOMBRE 5
+lex::char *
+lex::NOMBRE 2
+lex::char :
+lex::OPERATIONBOOL !
+lex::BOOLEAN False
+newIfThenElseAST
+
+Parsing:: syntax OK
+
+Root symbol:: ?
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :True: ] :?: [ [ :12: ] :+: [ [ :5: ] :*: [ :2: ] ] ] ::: [ [ :False: ] :!: ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteBo True
+ConJmp 6
+CsteNb 12
+CsteNb 5
+CsteNb 2
+MultNb
+AddiNb
+Jump 2
+CsteBo False
+Not
+Halt
+
+Voici le résultat dans la machine JS:
+...
+...
+...
+PC : 10
+Pile : [22 ]
+Contexte : |
+Instruction : Halt
+
+Programme exécuté avec succes 
+
+
+
+12?31+2:!(12*14);
+lex::NOMBRE 12
+lex::char ?
+lex::NOMBRE 31
+lex::char +
+lex::NOMBRE 2
+lex::char :
+lex::OPERATIONBOOL !
+lex::char (
+lex::NOMBRE 12
+lex::char *
+lex::NOMBRE 14
+lex::char )
+newIfThenElseAST
+
+Parsing:: syntax OK
+
+Root symbol:: ?
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :12: ] :?: [ [ :31: ] :+: [ :2: ] ] ::: [ [ [ :12: ] :*: [ :14: ] ] :!: ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 12
+ConJmp 4
+CsteNb 31
+CsteNb 2
+AddiNb
+Jump 4
+CsteNb 12
+CsteNb 14
+MultNb
+Not
+Halt
+
+
 
