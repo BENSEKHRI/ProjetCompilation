@@ -4,13 +4,13 @@
 
 /* unary-and-binary tree structure */
 struct _tree {
-  int taille;
+  int taille;                 /* Taille pour calcul des offset */
   char car;                   /* char for arithmetic operation */
   char car2;                  /* second char for if then else ternaire */
-  int opeBool;                /* string for boolean operation */
   double val;			            /* double for value */
   int valCal;			            /* int to know the double type (float | int | floating scientific) */
   int boolean;                /* True 1 | False 2 */
+  int opeBool;                /* int for boolean operation */
   char* var;                  /* Variable */ 
   char aff;                   /* Affectation */
   struct _tree* left;    	    /* used for unary node but NULL if leaf */
@@ -58,12 +58,6 @@ typedef struct _commande_ast* programme_ast;
 /* create an AST from a root value and two AST sons */
 AST newBinaryAST(char car, AST left, AST right);
 
-/* create an AST from a boolean operation and two AST sons */
-AST newOpeBoolAST(int opeBool, AST left, AST right);
-
-/* create an AST from a if then else operation and 3 AST sons */
-AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon);
-
 /* create an AST from a root value and one AST son */
 AST newUnaryAST(char car, AST son);
 
@@ -78,6 +72,11 @@ AST newAffAST(char* var, char aff, AST son);
 
 /* create an AST leaf from a variable */
 AST newVariableAST(char* var);
+/* create an AST from a boolean operation and two AST sons */
+AST newOpeBoolAST(int opeBool, AST left, AST right);
+
+/* create an AST from a if then else operation and 3 AST sons */
+AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon);
 
 /* delete an AST */
 void freeAST(AST t);
@@ -85,6 +84,11 @@ void freeAST(AST t);
 /* print an AST*/
 void printAST(AST t);
 
+/* print post-fix an AST*/
+void code (AST t);
+
+/* write a post-fix AST in a file*/
+void echoCodeInFile (AST t, char const *filename);
 
 
 /*-----------------------------------------------.
@@ -141,6 +145,7 @@ void freeProg(programme_ast prog);
 
 /* print a program*/
 void printProg(programme_ast prog);
+
 
 
 #endif // !_AST_H_

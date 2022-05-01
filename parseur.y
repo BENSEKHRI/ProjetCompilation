@@ -62,19 +62,19 @@ commande:
 ;
 
 expression: 
-    expression '+' expression	{ $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	{ $$ = newBinaryAST('-',$1,$3); }
-  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
-  | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
-  | expression '/' expression	{ $$ = newBinaryAST('/',$1,$3); }
-  | '(' expression ')'		    { $$ = $2; }
-  | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
-  | expression OPERATIONBOOL expression         { $$ = newOpeBoolAST($2,$1,$3); }
+    expression '+' expression	                { $$ = newBinaryAST('+',$1,$3); }
+  | expression '-' expression	                { $$ = newBinaryAST('-',$1,$3); }
+  | expression '%' expression	                { $$ = newBinaryAST('%',$1,$3); }
+  | expression '*' expression	                { $$ = newBinaryAST('*',$1,$3); }
+  | '(' expression ')'		                    { $$ = $2; }
+  | '-' expression %prec UMOINS	                { $$ = newUnaryAST('-',$2); }
+  | OPERATIONBOOL expression                    { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
+  | expression OPERATIONBOOL expression         { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
   | expression '?' expression ':' expression    { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
-  | NOMBRE			{ $$ = newLeafAST($1, yylval.valCal); } 
-  | VARIABLE			{ $$ = newVariableAST($1); } 
-  | BOOLEAN         { $$ = newBooleanAST($1); } 
-  | VARIABLE AFF expression { $$ = newAffAST($1,'=',$3); }
+  | NOMBRE			                            { $$ = newLeafAST($1, yylval.valCal); } 
+  | VARIABLE			                        { $$ = newVariableAST($1); } 
+  | BOOLEAN                                     { $$ = newBooleanAST($1); } 
+  | VARIABLE AFF expression                     { $$ = newAffAST($1,'=',$3); }
   ;
 
 %%

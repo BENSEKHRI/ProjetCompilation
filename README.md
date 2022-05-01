@@ -61,6 +61,27 @@ Test N°01:
 ---------
 x=12+15*314;
 
+Root symbol:: 
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :True: ] :||: [ [ [ :False: ] :!: ] :&&: [ :True: ] ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteBo True
+ConJmp 2
+CsteBo True
+Jump 4
+CsteBo False
+Not
+ConJmp 2
+CsteBo True
+Jump 1
+CsteBo False
+Halt
 
 
 Test N°02:
