@@ -20,13 +20,6 @@ AST newBinaryAST(char car, AST left, AST right)
     if (left && !right) t->taille+=1+left->taille;
     if (right && !left) t->taille+=1+right->taille;
     
-    t->car=car;
-    t->left=left;
-    t->right=right;
-  } else printf("MALLOC! ");
-  return t;
-}
-
     t->car = car;
     t->left = left;
     t->right = right;
