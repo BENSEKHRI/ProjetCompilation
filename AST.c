@@ -63,7 +63,8 @@ void printAST(AST t)
       if (t->val)
         printf(":%d: ", t->val);
     }
-    else {
+    else
+    {
       if (t->car)
         printf(":%c: ", t->car);
     }
@@ -82,14 +83,17 @@ void code(AST t)
   if (t != NULL)
   {
     code(t->left);
-    if (t->left == NULL)
-      if(t->val)
+    if (t->left == NULL) {
+      if (t->val)
         printf("CsteNb %d\n", t->val);
-    else if (t->right == NULL)
+
+    }
+    else if (t->right == NULL) {
+
       printf("NegNb\n");
+    }
     else
     {
-      code(t->right);
       if (t->car)
         switch (t->car)
         {
@@ -107,6 +111,8 @@ void code(AST t)
           break;
         }
     }
+      code(t->right);
+
   }
 }
 
