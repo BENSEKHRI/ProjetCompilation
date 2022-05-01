@@ -28,6 +28,7 @@
 %token <boolean> BOOLEAN
 %token <opeBool>OPERATIONBOOL
 
+%left '!'
 %left OPERATIONBOOL 
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
 %left '%' '*' '/'
