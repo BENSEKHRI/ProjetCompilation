@@ -137,4 +137,19 @@ Instruction : Halt
 Programme exécuté avec succes 
 
 
+
+12!12;
+lex::NOMBRE 12
+lex::OPERATIONBOOL !
+lex::NOMBRE 12
+Parsing:: syntax error - expression _ ! _ 
+
+
+
+==12;
+lex::OPERATIONBOOL ==
+lex::NOMBRE 12
+Parsing:: syntax error - expression ! _
+
+
 Des tests ont bien sûr été effectué via fichier js en arguments.
