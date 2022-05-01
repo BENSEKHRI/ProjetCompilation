@@ -71,7 +71,10 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
-    t->taille+=1+left->taille+right->taille;
+    if(left && right)
+      t->taille+=1+left->taille+right->taille;
+    if(left && !right)
+      t->taille+=1+left->taille;
     t->opeBool=opeBool;
     t->left=left;
     t->right=right;
