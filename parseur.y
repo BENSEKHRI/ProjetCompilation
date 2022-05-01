@@ -8,8 +8,13 @@
 %token NUMBER
 %token BOOLEAN
 %token OPERATIONBOOL
+%token IDENT
+%token AFF
+%token ';'
 
 
+%left ';'
+%left AFF
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
@@ -17,9 +22,21 @@
 %left '*' '%' 
 %nonassoc UMOINS
 
+
 %%
 
-result: expression
+
+result: programme
+
+programme:  
+        commande programme    
+    |   %empty                     
+;
+
+commande: 
+        expression ';'                            
+    | ';'                         
+;
 
 expression:
         expression '+' expression
@@ -31,8 +48,10 @@ expression:
     |   '!' expression 
     |   expression OPERATIONBOOL expression
     |   expression '?' expression ':' expression
+    |   IDENT AFF expression 
     |   NUMBER
     |   BOOLEAN
+    |   IDENT			 
 ;
 
 

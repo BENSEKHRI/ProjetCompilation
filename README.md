@@ -44,12 +44,59 @@ gcc -o main main.c parseur.tab.c lex.yy.c
 # Explications
 Vous pouvez exécuter le projet sur un fichier js existant directement, et celui-ci vous diras si les instructions contenues dans le fichier sont correctes, ou bien sans fichier en argument, et cela lancera tout simplement la main en console.
 
+# Remarque
+Dans ce fragement p2.0 
+si on execute sur console sans un fichier js, pour finir une instruction on tape ';' et pour finir le programme on tape '€'.
+
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
 Tous les tests du fragement p0, p1 plus ce qui suit:
 
 _ Les variables commencent par une lettre minuscule et peuvent être composées de lettres, de chiffres, de caractères de soulignement "_".
-— Les variables ne doivent pas être déclarées.
 — Les variables sont instanciées par l'expression 5 x = expr ; où expr est une expression quelconque. Ces variables sont toujours globales.
 — Respecter les priorités et l'associativité !
 — Les variables peuvent être utilisées à l'intérieur des expressions.
+
+Test N°01:
+---------
+x=12+15*314;
+lex::IDENT x
+lex::AFF =
+lex::NUMBER 12
+lex::char +
+lex::NUMBER 15
+lex::char *
+lex::NUMBER 314
+lex::char ;
+€
+
+Parsing:: syntax OK
+
+
+Test N°02:
+Execusion avec le fichier toto.js qui contient ceci :
+x = 12;
+y = True && False ? 5 * 12 - 12 : 15;
+
+Sortie: ./main toto.js
+
+lex::IDENT x
+lex::AFF =
+lex::NUMBER 12
+lex::char ;
+lex::IDENT y
+lex::AFF =
+lex::BOOLEAN True
+lex::OPERATIONBOOL &&
+lex::BOOLEAN False
+lex::char ?
+lex::NUMBER 5
+lex::char *
+lex::NUMBER 12
+lex::char -
+lex::NUMBER 12
+lex::char :
+lex::NUMBER 15
+lex::char ;
+
+Parsing:: syntax OK

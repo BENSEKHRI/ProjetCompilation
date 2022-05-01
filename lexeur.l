@@ -14,8 +14,10 @@
 NaN                                     { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
 True|False                              { printf("lex::BOOLEAN %s\n",yytext); return BOOLEAN; }  
 ==|\<=|>=|<|>|"||"|&&                   { printf("lex::OPERATIONBOOL %s\n",yytext); return OPERATIONBOOL; }  
+[a-zA-Z_][a-zA-Z0-9_]*                  { printf("lex::IDENT %s\n",yytext); return IDENT;}
+=							            { printf("lex::AFF %s\n", yytext); return AFF;} 
 [ \t\n] 	                            { ; } /* ignore space, tab, and line return*/
-[;]                                     { return 0; } // exit sucessfully
+[€]                                     { return 0; } // exit sucessfully
 .                                       { printf("lex::char %s\n",yytext); return yytext[0]; } // other one-
 
 %%
