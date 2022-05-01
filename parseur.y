@@ -8,47 +8,50 @@
 %token NUMBER
 %token BOOLEAN
 %token OPERATIONBOOL
-%token VARIABLE
+%token IDENT
 %token AFF
 %token ';'
 
 
 %left ';'
 %left AFF
-%left '?' ':'
+%left '!'
 %left OPERATIONBOOL 
+%left '?' ':'
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
-%left '%' '*'
+%left '*' '%' 
 %nonassoc UMOINS
 
+
 %%
+
 
 result: programme
 
 programme:  
-      commande programme
-    |   %empty
+        commande programme    
+    |   %empty                     
 ;
 
-
 commande: 
-      expression ';'
-    | ';'
+        expression ';'                            
+    | ';'                         
 ;
 
 expression:
         expression '+' expression
     |   expression '-' expression
-    |   expression '%' expression
     |   expression '*' expression
+    |   expression '%' expression
     |   '(' expression ')'
     |   '-' expression %prec UMOINS
+    |   '!' expression 
     |   expression OPERATIONBOOL expression
     |   expression '?' expression ':' expression
+    |   IDENT AFF expression 
     |   NUMBER
     |   BOOLEAN
-    |   VARIABLE
-    |   VARIABLE AFF expression
+    |   IDENT			 
 ;
 
 
