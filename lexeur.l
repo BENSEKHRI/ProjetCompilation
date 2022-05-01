@@ -14,7 +14,7 @@
 NaN                                     { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
 True|False                              { printf("lex::BOOLEAN %s\n",yytext); return BOOLEAN; }  
 ==|\<=|>=|<|>                           { printf("lex::OPERATIONBOOL %s\n",yytext); return OPERATIONBOOL; }  
-[ \t\n]                                 { ; } // ignore space and tab
+[ \t\n]|[/\*a-z*A-Z*0-9**/] 	        { ; } /* ignore space, tab, and line return and comments*/
 [;]                                     { return 0; } // exit sucessfully
 .                                       { printf("lex::char %s\n",yytext); return yytext[0]; } // other one-
 

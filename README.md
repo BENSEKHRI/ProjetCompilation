@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement p1.0
+# Compilateur JavaScript    -   Fragement p1.1
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -46,32 +46,13 @@ Vous pouvez exécuter le projet sur un fichier js existant directement, et celui
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement p0.0 et p0.1 et p0.2 plus ce qui suit:
+Tous les tests du fragement p0.0, p0.1, p0.2 et p1.0 plus ce qui suit:
 
-* Les nombres peuvent être écrits 1.215e25 ou .485e-42 ou 485e-42. Nous ajoutons également la constante NaN.
+* Ajout des commentaires :
 
-1.215e25;
-lex::NUMBER 1.215e25
-
-Parsing:: syntax OK
-
-
-
-.485e-42;
-lex::NUMBER .485e-42
+/* 12 */;
+lex::NUMBER 12
 
 Parsing:: syntax OK
 
-
-
-485e-42;
-lex::NUMBER 485e-42
-
-Parsing:: syntax OK
-
-
-
-NaN;
-lex::NUMBER NaN
-
-Parsing:: syntax OK
+il ignore bien les /* */ mais pas ce qui est a l'interieur, malheuresement.
