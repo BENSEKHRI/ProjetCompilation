@@ -3,13 +3,14 @@
 
 /* unary-and-binary tree structure */
 struct _tree {
-  char car;                    	/* char for arithmetic operation */
-  int val;			/* int  for value */
+  char car;               /* char for arithmetic operation */
+  int val;			          /* int  for value */
   struct _tree* left;    	/* used for unary node but NULL if leaf */
   struct _tree* right;   	/* NULL if unary node or leaf*/
 };
 
 typedef struct _tree* AST;
+
 
 /* create an AST from a root value and two AST sons */
 AST newBinaryAST(char car, AST left, AST right);
@@ -25,5 +26,11 @@ void freeAST(AST t);
 
 /* print an AST*/
 void printAST(AST t);
+
+/* Profix print an AST */
+void code (AST t);
+
+/* write the profix print an AST in a file */
+void echoCodeInFile (AST t, char const *filename);
 
 #endif // !_AST_H_
