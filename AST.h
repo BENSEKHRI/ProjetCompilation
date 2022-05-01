@@ -11,6 +11,8 @@ struct _tree {
   double val;			            /* double for value */
   int valCal;			            /* int to know the double type (float | int | floating scientific) */
   int boolean;                /* True 1 | False 2 */
+  char* var;                  /* Variable */ 
+  char aff;                   /* Affectation */
   struct _tree* left;    	    /* used for unary node but NULL if leaf */
   struct _tree* right;   	    /* NULL if unary node or leaf*/
   struct _tree* ifThenElse;   /* NULL if not if then else expresion */
@@ -19,16 +21,29 @@ struct _tree {
 typedef struct _tree* AST;
 
 
+
+/* Strucutre of a symbol in the first case it is a variable. */
+struct _symbole {
+  char* var; 
+  struct _symbole *suivant;
+};
+
+typedef struct _symbole* symbole; 
+
+/* List of symbols */
+typedef struct _symbole* symboles; 
+
+
+
 /* Structure of a command */
 struct _commande_ast {
   AST expression;
-  char* var; 
-  char aff;
   char pVirg;
   struct _commande_ast *suivant;
 };
 
 typedef struct _commande_ast* commande_ast;
+
 
 
 /* Structure of a program that is a list of commands */
@@ -58,11 +73,35 @@ AST newLeafAST(double val, int valCal);
 /* create an AST leaf from a boolean */
 AST newBooleanAST(int boolean);
 
+/* create an AST leaf from an assignment */
+AST newAffAST(char* var, char aff, AST son);
+
+/* create an AST leaf from a variable */
+AST newVariableAST(char* var);
+
 /* delete an AST */
 void freeAST(AST t);
 
 /* print an AST*/
 void printAST(AST t);
+
+
+
+/*-----------------------------------------------.
+| functions for manipulating the list of symbols |                 |
+`-----------------------------------------------*/
+
+/* Add a symbol to the list of symbols */
+symboles addASymbol(symboles sym, char* var);
+
+/* Search for a symbol in the list of symbols  */
+int searchSymbol(symboles sym,  char* var);
+
+/* Delete the list of symbols */
+void freeSymbol(symboles sym);
+
+/* Print the list of symbols */
+void printSymbol(symboles sym);
 
 
 
@@ -102,5 +141,6 @@ void freeProg(programme_ast prog);
 
 /* print a program*/
 void printProg(programme_ast prog);
+
 
 #endif // !_AST_H_

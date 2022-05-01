@@ -3,6 +3,7 @@
 #include <string.h>	     /* Manipulation de chaine de caractères */
 #include "AST.h"
 
+symboles SYMBOL_PROG = NULL;
 
 
 /*-----------------------------------------------.
@@ -56,7 +57,7 @@ AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon) 
 /* create an AST from a root value and one AST son */
 AST newUnaryAST(char car, AST son)
 {
-  return newBinaryAST(car, son, NULL);
+  return newBinaryAST(car, NULL, son);
 }
 
 /* create an AST leaf from a value */
@@ -86,6 +87,50 @@ AST newBooleanAST(int boolean)
   return t;
 }
 
+/**
+ * @brief   Cette fonction premet de créer une commande à partir d'une affectation.
+ *          VARIABLE AFF expression
+ * 
+ * @param var La variable.
+ * @param aff le = de l'affectation
+ * @param son l'expression de la variable.
+ * @return AST l'expression créee.
+ */
+AST newAffAST(char* var, char aff, AST son) {
+  AST t=(struct _tree*) malloc(sizeof(struct _tree));
+  if (t!=NULL){	/* malloc ok */
+    t->taille+=1+son->taille;
+    t->var = var;
+    t->aff = aff;
+    t->left = NULL;
+    t->right = son;
+    t->ifThenElse  = NULL;
+    printf("\nval rech____-%d-_____\n",searchSymbol(SYMBOL_PROG, var));
+    SYMBOL_PROG = addASymbol(SYMBOL_PROG, var);
+    printSymbol(SYMBOL_PROG);
+  } else printf("MALLOC! ");
+  return t;
+}
+
+AST newVariableAST(char* var) {
+  if (searchSymbol(SYMBOL_PROG, var) == 1) {
+    AST t=(struct _tree*) malloc(sizeof(struct _tree));
+    if (t!=NULL){	/* malloc ok */
+      t->taille++;
+      t->var=var;
+      t->left=NULL;
+      t->right=NULL;
+      t->ifThenElse=NULL;
+    } else printf("MALLOC! ");
+    return t;
+  } else {
+    printf("Error - no variable\n");
+    exit(EXIT_FAILURE);
+  }
+    
+}
+
+
 /* delete an AST */
 void freeAST(AST t)
 {
@@ -101,10 +146,22 @@ void freeAST(AST t)
 void printAST(AST t)
 {
   if (t!=NULL) {
+    printf("\nTaille: %d\n", t->taille);
     printf("[ ");
     printAST(t->left);
     /* check if node is car|val */
+    
     if (t->left==NULL) {
+
+      if (t->var) 
+        printf(":%s: ", t->var);
+    
+      if(t->aff)
+        printf(":%c: ",t->aff);
+      
+      if(t->car)
+        printf(":%c: ",t->car);
+
       if (t->val) 
         switch (t->valCal) {
           case 1: printf(":%.0lf: ", t->val); break;  // int
@@ -124,6 +181,7 @@ void printAST(AST t)
     else {
       if(t->car)
         printf(":%c: ",t->car);     
+      
       if(t->opeBool)
         switch (t->opeBool) {
           case 1: printf(":==: "); break;
@@ -142,6 +200,83 @@ void printAST(AST t)
     printAST(t->ifThenElse);
     printf("] ");
   }
+}
+
+/*-----------------------------------------------.
+| functions for manipulating the list of symbols |                 |
+`-----------------------------------------------*/
+
+/**
+ * @brief   Cette fonction permet d'ajouter un symbole au symbole déja passé dans le programme.
+ * 
+ * @param sym la liste des symboles du programme.
+ * @param var le symbole à ajouter dans ce premier cas c'est une variable.
+ * @return symboles le résultat après ajout du symbole.
+ */
+symboles addASymbol(symboles sym, char* var) {
+  if(searchSymbol(sym, var) == 1) 
+    return sym;
+  else {
+    symbole newSymbol = (struct _symbole*) malloc(sizeof(struct _symbole));
+    if (newSymbol!=NULL) {
+      newSymbol->var = var;
+      newSymbol->suivant = sym;
+    } else {
+      printf("Error - addASymbol\n");
+      exit(EXIT_FAILURE);
+    }
+    return newSymbol;
+  }
+}
+
+
+/**
+ * @brief   Cette fonction permet de rechercher un symbole dans la liste des symbole du programme.
+ *          Permet de savoir si une variable par exemple est déja passé.
+ * 
+ * @param sym liste des symboles.
+ * @param var le symbole à rechercher, dans ce premier cas c'est une variable.
+ * @return int 1 si le symbole appartient, 0 sinon.
+ */
+int searchSymbol(symboles sym,  char* var) {
+  while(sym != NULL) {
+      if(strcmp(sym->var, var) == 0) 
+          return 1;
+      sym = sym->suivant;
+  }
+  return 0;
+}
+
+
+/**
+ * @brief   Cette fonction permet de libérer la mémoire allouée par les symboles du programe.
+ * 
+ * @param sym les symboles du programme.
+ */
+void freeSymbol(symboles sym) {
+  if (sym!=NULL) {
+    symbole symboleSuivant = NULL;
+    while (sym) {
+      symboleSuivant = sym->suivant;
+      free(sym->var);
+      sym = symboleSuivant;
+    }
+  }
+}
+
+
+/**
+ * @brief   Cette fonction permet d'afficher tous les symboles du programme.
+ * 
+ * @param sym les symboles du programme.
+ */
+void printSymbol(symboles sym) {
+  printf("\n\nIDENT = |");
+  while(sym != NULL) {
+      printf(" %s |", sym->var);
+      sym = sym->suivant;
+  }
+  printf("\n");
 }
 
 
@@ -163,28 +298,6 @@ commande_ast newCommanedeExpAST(AST expression, char pVirg) {
   if (c!=NULL){	/* malloc ok */
     c->expression = expression;
     c->pVirg = pVirg;
-  } else printf("MALLOC! ");
-  return c;
-}
-
-
-/**
- * @brief   Cette fonction premet de créer une commande à partir d'une affectation.
- *          VARIABLE AFF expression
- * 
- * @param expression l'AST de l'expression.
- * @param var La variable.
- * @param aff le = de l'affectation
- * @param pVirg le point virgule de la fin de l'expression
- * @return commande_ast la commande créee.
- */
-commande_ast newCommanedeAffAST(AST expression, char* var, char aff, char pVirg) {
-  commande_ast c =(struct _commande_ast*) malloc(sizeof(struct _commande_ast));
-  if (c!=NULL){	/* malloc ok */
-    c->var = var;
-    c->aff = aff;
-    c->pVirg = pVirg;
-    c->expression = expression;
   } else printf("MALLOC! ");
   return c;
 }
@@ -214,7 +327,6 @@ commande_ast newCommanedePVirgAST(char pVirg) {
 void freeCommande(commande_ast c) {
   if (c!=NULL) {
     freeAST(c->expression);
-    free(c->var);
     free(c);
   }
 }
@@ -230,15 +342,9 @@ void printCommande(commande_ast c) {
   if (c!=NULL) {
     printf("| ");
     if (c->expression) {
-      if (c->var) {
-        printf(":%s: ", c->var);
-        printf(":%c: ", c->aff);
         printAST(c->expression);  
         printf(":%c: ", c->pVirg);
-      } else {
-        printAST(c->expression);  
-        printf(":%c: ", c->pVirg);
-      }      
+             
     } else
         printf(":%c: ", c->pVirg);
     printf("| ");

@@ -56,7 +56,6 @@ programme:
 
 commande: 
     expression ';'              { $$ = newCommanedeExpAST($1,';'); }              
-  | VARIABLE AFF expression ';' { $$ = newCommanedeAffAST($3,$1,'=',';'); }
   | ';'                         { $$ = newCommanedePVirgAST(';'); }
 ;
 
@@ -71,7 +70,9 @@ expression:
   | expression OPERATIONBOOL expression         { $$ = newOpeBoolAST($2,$1,$3); }
   | expression '?' expression ':' expression    { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
   | NOMBRE			{ $$ = newLeafAST($1, yylval.valCal); } 
+  | VARIABLE			{ $$ = newVariableAST($1); } 
   | BOOLEAN         { $$ = newBooleanAST($1); } 
+  | VARIABLE AFF expression { $$ = newAffAST($1,'=',$3); }
   ;
 
 %%
