@@ -1,4 +1,4 @@
-# Compilateur JavaScript - Fragement c1.2
+# Compilateur JavaScript - Fragement c1.3
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -48,21 +48,117 @@ Vous pouvez exécuter le projet sur un fichier js existant directement, et celui
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement c0.0, c0.1, c0.2, c1.0 et c1.1 plus ce qui suit:
+Tous les tests du fragement c0, c1.0, c1.1 et c1.2 plus ce qui suit:
 
-* L'opérateur ternaire _ ? _ : _ qui évalue le premier, si c'est un booléen l'opérateur exécute le code du deuxième argument, sinon il exécute le code du troisième argument : c'est comme un if_then_else mais à l'intérieur des expressions. Instructions de montage supplémentaires autorisées: Jump, ConJmp.
+* Les booléens "or" et "and" => '||' et '&&' :
+Test N°01 :
 
-
-True?12+5*2:!False;
+True||(!False&&True);
 lex::BOOLEAN True
-lex::char ?
-lex::NOMBRE 12
-lex::char +
-lex::NOMBRE 5
-lex::char *
-lex::NOMBRE 2
-lex::char :
+lex::OPERATIONBOOL ||
+lex::char (
 lex::OPERATIONBOOL !
+lex::BOOLEAN False
+lex::OPERATIONBOOL &&
+lex::BOOLEAN True
+lex::char )
+
+Parsing:: syntax OK
+
+Root symbol:: 
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :True: ] :||: [ [ [ :False: ] :!: ] :&&: [ :True: ] ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteBo True
+ConJmp 2
+CsteBo True
+Jump 4
+CsteBo False
+Not
+ConJmp 2
+CsteBo True
+Jump 1
+CsteBo False
+Halt
+
+
+Sortie de la machine JS avec ce code assembleur:
+...
+...
+...
+PC : 10
+Pile : [True ]
+Contexte : |
+Instruction : Halt
+
+Programme exécuté avec succes 
+
+
+Test N°02 :
+
+Exécution avec le ficheir toto.js qui contient : True || (!False && True);
+lex::BOOLEAN True
+lex::OPERATIONBOOL ||
+lex::char (
+lex::OPERATIONBOOL !
+lex::BOOLEAN False
+lex::OPERATIONBOOL &&
+lex::BOOLEAN True
+lex::char )
+
+Parsing:: syntax OK
+
+Root symbol:: 
+
+/*-------------------------------------.
+|    Writing the file toto.jsm    |
+`-------------------------------------*/
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :True: ] :||: [ [ [ :False: ] :!: ] :&&: [ :True: ] ] ]
+
+
+
+- Contenue du fichier toto.jsm :
+--------------------------------
+
+CsteBo True
+ConJmp 2
+CsteBo True
+Jump 4
+CsteBo False
+Not
+ConJmp 2
+CsteBo True
+Jump 1
+CsteBo False
+Halt
+
+
+
+
+
+
+
+Test N°03 :
+
+True&&False?False:True&&False;
+lex::BOOLEAN True
+lex::OPERATIONBOOL &&
+lex::BOOLEAN False
+lex::char ?
+lex::BOOLEAN False
+lex::char :
+lex::BOOLEAN True
+lex::OPERATIONBOOL &&
 lex::BOOLEAN False
 newIfThenElseAST
 
@@ -73,74 +169,34 @@ Root symbol:: ?
 /*----------.
 |    AST    |
 `----------*/
-[ [ :True: ] :?: [ [ :12: ] :+: [ [ :5: ] :*: [ :2: ] ] ] ::: [ [ :False: ] :!: ] ] 
+[ [ [ :True: ] :&&: [ :False: ] ] :?: [ :False: ] ::: [ [ :True: ] :&&: [ :False: ] ] ] 
 
 /*----------------.
 |    POST-FIXE    |
 `----------------*/
 CsteBo True
-ConJmp 6
-CsteNb 12
-CsteNb 5
-CsteNb 2
-MultNb
-AddiNb
-Jump 2
+ConJmp 2
 CsteBo False
-Not
+Jump 1
+CsteBo False
+ConJmp 2
+CsteBo False
+Jump 3
+CsteBo True
+ConJmp 2
+CsteBo False
+Jump 1
+CsteBo False
 Halt
 
-Voici le résultat dans la machine JS:
+
+Résultat de la sortie de la machine JS:
 ...
 ...
 ...
-PC : 10
-Pile : [22 ]
+PC : 13
+Pile : [False ]
 Contexte : |
 Instruction : Halt
 
 Programme exécuté avec succes 
-
-
-
-12?31+2:!(12*14);
-lex::NOMBRE 12
-lex::char ?
-lex::NOMBRE 31
-lex::char +
-lex::NOMBRE 2
-lex::char :
-lex::OPERATIONBOOL !
-lex::char (
-lex::NOMBRE 12
-lex::char *
-lex::NOMBRE 14
-lex::char )
-newIfThenElseAST
-
-Parsing:: syntax OK
-
-Root symbol:: ?
-
-/*----------.
-|    AST    |
-`----------*/
-[ [ :12: ] :?: [ [ :31: ] :+: [ :2: ] ] ::: [ [ [ :12: ] :*: [ :14: ] ] :!: ] ] 
-
-/*----------------.
-|    POST-FIXE    |
-`----------------*/
-CsteNb 12
-ConJmp 4
-CsteNb 31
-CsteNb 2
-AddiNb
-Jump 4
-CsteNb 12
-CsteNb 14
-MultNb
-Not
-Halt
-
-
-

@@ -69,16 +69,19 @@ AST newBooleanAST(int boolean)
 /* create an AST from a root value and two AST sons */
 AST newOpeBoolAST(int opeBool, AST left, AST right)
 {
-  AST t=(struct _tree*) malloc(sizeof(struct _tree));
-  if (t!=NULL){	/* malloc ok */
-    if(left && right)
-      t->taille+=1+left->taille+right->taille;
-    if(left && !right)
-      t->taille+=1+left->taille;
-    t->opeBool=opeBool;
-    t->left=left;
-    t->right=right;
-  } else printf("MALLOC! ");
+  AST t = (struct _tree *)malloc(sizeof(struct _tree));
+  if (t != NULL)
+  { /* malloc ok */
+    if (left && right)
+      t->taille += 1 + left->taille + right->taille;
+    if (left && !right)
+      t->taille += 1 + left->taille;
+    t->opeBool = opeBool;
+    t->left = left;
+    t->right = right;
+  }
+  else
+    printf("MALLOC! ");
   return t;
 }
 
@@ -137,9 +140,6 @@ void printAST(AST t)
           break; // float scientific
         case 4:
           printf(":NaN: ");
-          break; // NaN
-        default:
-          printf("Error Float\n");
           break;
         }
 
@@ -151,9 +151,6 @@ void printAST(AST t)
           break;
         case 2:
           printf(":False: ");
-          break;
-        default:
-          printf("Error Boolean\n");
           break;
         }
     }
@@ -182,8 +179,11 @@ void printAST(AST t)
         case 6:
           printf(":!: ");
           break;
-        default:
-          printf("Error boolean operation\n");
+        case 7:
+          printf(":||: ");
+          break;
+        case 8:
+          printf(":&&: ");
           break;
         }
     }
@@ -223,9 +223,6 @@ void code(AST t)
           break; // float scientific
         case 4:
           printf("CsteNb NaN\n");
-          break; // NaN
-        default:
-          printf("Error Float\n");
           break;
         }
 
@@ -238,14 +235,11 @@ void code(AST t)
         case 2:
           printf("CsteBo False\n");
           break;
-        default:
-          printf("Error boolean\n");
-          break;
         }
     }
     else if (t->right == NULL)
     {
-      if (t->opeBool) 
+      if (t->opeBool)
         printf("Not\n");
       else
         printf("NegNb\n");
@@ -254,6 +248,24 @@ void code(AST t)
     {
       if (t->right && t->ifThenElse)
         printf("ConJmp %d\n", t->right->taille += 1);
+
+      if (t->right)
+      {
+        if (t->opeBool)
+        {
+          switch (t->opeBool)
+          {
+          case 7:
+            printf("ConJmp 2\n");
+            printf("CsteBo True\n");
+            printf("Jump %d\n", t->right->taille);
+            break;
+          case 8:
+            printf("ConJmp %d\n", t->right->taille += 1);
+            break;
+          }
+        }
+      }
 
       code(t->right);
 
@@ -297,6 +309,20 @@ void code(AST t)
       if (t->ifThenElse)
         printf("Jump %d\n", t->ifThenElse->taille);
 
+      if (t->right)
+      {
+        if (t->opeBool)
+        {
+          switch (t->opeBool)
+          {
+          case 8:
+            printf("Jump 1\n");
+            printf("CsteBo False\n");
+            break;
+          }
+        }
+      }
+
       code(t->ifThenElse);
     }
   }
@@ -335,9 +361,6 @@ void echoCodeInFile(AST t, char const *filename)
             break; // float scientific
           case 4:
             fprintf(f, "CsteNb NaN\n");
-            break; // NaN
-          default:
-            fprintf(f, "Error Float\n");
             break;
           }
         }
@@ -352,9 +375,6 @@ void echoCodeInFile(AST t, char const *filename)
             break;
           case 2:
             fprintf(f, "CsteBo False\n");
-            break;
-          default:
-            fprintf(f, "Error boolean\n");
             break;
           }
         }
@@ -373,6 +393,26 @@ void echoCodeInFile(AST t, char const *filename)
         {
           fseek(f, 0, SEEK_END);
           fprintf(f, "ConJmp %d\n", t->right->taille += 1);
+        }
+
+        if (t->right)
+        {
+          if (t->opeBool)
+          {
+            switch (t->opeBool)
+            {
+            case 7:
+              fseek(f, 0, SEEK_END);
+              fprintf(f, "ConJmp 2\n");
+              fprintf(f, "CsteBo True\n");
+              fprintf(f, "Jump %d\n", t->right->taille);
+              break;
+            case 8:
+              fseek(f, 0, SEEK_END);
+              fprintf(f,"ConJmp %d\n", t->right->taille += 1);
+              break;
+            }
+          }
         }
 
         fseek(f, 0, SEEK_END);
@@ -425,6 +465,21 @@ void echoCodeInFile(AST t, char const *filename)
         {
           fseek(f, 0, SEEK_END);
           fprintf(f, "Jump %d\n", t->ifThenElse->taille);
+        }
+
+        if (t->right)
+        {
+          if (t->opeBool)
+          {
+            switch (t->opeBool)
+            {
+            case 8:
+              fseek(f, 0, SEEK_END);
+              fprintf(f, "Jump 1\n");
+              fprintf(f, "CsteBo False\n");
+              break;
+            }
+          }
         }
 
         fseek(f, 0, SEEK_END);

@@ -26,7 +26,8 @@
 %type  <exp> expression
 %token <num> NOMBRE
 %token <boolean> BOOLEAN
-%token <opeBool>OPERATIONBOOL
+%token <opeBool> OPERATIONBOOL
+
 
 %left '?' ':'
 %left OPERATIONBOOL 
@@ -39,17 +40,17 @@
 resultat:   expression		{ *pT = $1; }
 
 expression: 
-    expression '+' expression	{ $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	{ $$ = newBinaryAST('-',$1,$3); }
-  | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
-  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
-  | '(' expression ')'		{ $$ = $2; }
-  | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
-  | OPERATIONBOOL expression            { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
-  | expression OPERATIONBOOL expression { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
-  | expression '?' expression ':' expression { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
-  | NOMBRE			{ $$ = newLeafAST($1, yylval.valCal); } 
-  | BOOLEAN         { $$ = newBooleanAST($1); } 
+    expression '+' expression	                { $$ = newBinaryAST('+',$1,$3); }
+  | expression '-' expression	                { $$ = newBinaryAST('-',$1,$3); }
+  | expression '*' expression	                { $$ = newBinaryAST('*',$1,$3); }
+  | expression '%' expression	                { $$ = newBinaryAST('%',$1,$3); }
+  | '(' expression ')'		                    { $$ = $2; }
+  | '-' expression %prec MOINSU	              { $$ = newUnaryAST('-',$2); }
+  | OPERATIONBOOL expression                  { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
+  | expression OPERATIONBOOL expression       { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
+  | expression '?' expression ':' expression  { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
+  | NOMBRE			                              { $$ = newLeafAST($1, yylval.valCal); } 
+  | BOOLEAN                                   { $$ = newBooleanAST($1); } 
   ;
 
 %%
