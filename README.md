@@ -48,64 +48,23 @@ Vous pouvez exécuter le projet sur un fichier js existant directement, et celui
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement c0.0 et c0.1 plus ce qui suit:
+Tous les tests du fragement c0.0, c0.1 et c0.2 plus ce qui suit:
 
-* On peut utiliser True et False comme expressions constantes + ajout de opérateur binaire (_ == _) qui prend deux nombres et produit un boolèen + la négation (! _) + les opérateur <  >  <=  => + Respect des des priorités et de l'associativité:
+* Les nombres peuvent être écrits 1.215e25 ou .485e-42 ou 485e-42. Nous ajoutons également la constante NaN :
 
-!False == (12>=12-12.4);
-lex::OPERATIONBOOL !
-lex::BOOLEAN False
-lex::OPERATIONBOOL ==
-lex::char (
-lex::NOMBRE 12
-lex::OPERATIONBOOL >=
-lex::NOMBRE 12
+1.215e25+.485e-42*12.12-NaN==False==!True;
+lex::NOMBRE 1.215e25
+lex::char +
+lex::NOMBRE .485e-42
+lex::char *
+lex::NOMBRE 12.12
 lex::char -
-lex::NOMBRE 12.4
-lex::char )
-
-Parsing:: syntax OK
-
-Root symbol:: 
-
-/*----------.
-|    AST    |
-`----------*/
-[ [ [ :False: ] :!: ] :==: [ [ :12.00: ] :>=: [ [ :12.00: ] :-: [ :12.40: ] ] ] ] 
-
-/*----------------.
-|    POST-FIXE    |
-`----------------*/
-CsteBo False
-Not
-CsteNb 12.00
-CsteNb 12.00
-CsteNb 12.40
-SubiNb
-GrEqNb
-Equals
-Halt
-
-
-Voici le résultat dans la machine JS:
-...
-...
-...
-PC : 4
-Pile : [True ]
-Contexte : |
-Instruction : Halt
-
-Programme exécuté avec succes 
-
-
-
-
-True == !False;
-lex::BOOLEAN True
+lex::NOMBRE NaN
+lex::OPERATIONBOOL ==
+lex::BOOLEAN False
 lex::OPERATIONBOOL ==
 lex::OPERATIONBOOL !
-lex::BOOLEAN False
+lex::BOOLEAN True
 
 Parsing:: syntax OK
 
@@ -114,27 +73,24 @@ Root symbol::
 /*----------.
 |    AST    |
 `----------*/
-[ [ :True: ] :==: [ [ :False: ] :!: ] ] 
+[ [ [ [ [ :1.21e+25: ] :+: [ [ :4.85e-43: ] :*: [ :12.12: ] ] ] :-: [ :NaN: ] ] :==: [ :False: ] ] :==: [ [ :True: ] :!: ] ] 
 
 /*----------------.
 |    POST-FIXE    |
 `----------------*/
-CsteBo True
+CsteNb 1.21e+25
+CsteNb 4.85e-43
+CsteNb 12.12
+MultNb
+AddiNb
+CsteNb NaN
+SubiNb
 CsteBo False
+Equals
+CsteBo True
 Not
 Equals
 Halt
-
-Voici le résultat dans la machine JS:
-...
-...
-...
-PC : 8
-Pile : [True ]
-Contexte : |
-Instruction : Halt
-
-Programme exécuté avec succes 
 
 
 Des tests ont bien sûr été effectué via fichier js en arguments.
