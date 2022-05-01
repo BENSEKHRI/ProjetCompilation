@@ -95,6 +95,7 @@ void printAST(AST t)
           case 3: printf(":>=: "); break;
           case 4: printf(":<: "); break;
           case 5: printf(":>: "); break;
+          case 6: printf(":!: "); break;
           default: printf("Error boolean operation\n"); break;
         }
     }
@@ -121,7 +122,7 @@ void code (AST t) {
           default:  printf("Error boolean\n"); break;
         } 
     }
-    else if (t->right == NULL) 
+    else if (t->right == NULL) {}
       printf("NegNb\n");
     else {
       code(t->right);
@@ -129,10 +130,8 @@ void code (AST t) {
         switch (t->car) {
           case '+': printf("AddiNb\n"); break;
           case '-': printf("SubiNb\n"); break;
-          case '%': printf("ModuNb\n"); break;  
           case '*': printf("MultNb\n"); break;   
-          case '/': printf("DiviNb\n"); break;                                
-          default: printf("unknown\n"); break;
+          case '%': printf("ModuNb\n"); break;  
         }
       if(t->opeBool)
         switch (t->opeBool) {
@@ -141,7 +140,7 @@ void code (AST t) {
           case 3: printf("GrEqNb\n"); break;
           case 4: printf("LoStNb\n"); break;
           case 5: printf("GrStNb\n"); break;
-          default: printf("unknown\n"); break;
+          case 6: printf("Not\n"); break;
         }
     }
   }   
@@ -187,8 +186,6 @@ void echoCodeInFile (AST t, char const *filename) {
             case '%': fprintf(f,"ModuNb\n"); break; 
             case '*': fprintf(f,"MultNb\n"); break;  
             case '/': fprintf(f,"DiviNb\n"); break;                                     
-            default: fprintf(f,"unknown\n");
-              break;
           }
         }
         if(t->opeBool) {
@@ -199,7 +196,7 @@ void echoCodeInFile (AST t, char const *filename) {
             case 3: fprintf(f, "GrEqNb\n"); break;
             case 4: fprintf(f, "LoStNb\n"); break;
             case 5: fprintf(f, "GrStNb\n"); break;
-            default: fprintf(f, "unknown\n"); break;
+            case 6: printf("Not\n"); break;
           }
         }
       }

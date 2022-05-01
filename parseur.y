@@ -29,7 +29,7 @@
 
 %left OPERATIONBOOL 
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
-%left '%' '*' '/'
+%left '%' '*' 
 %nonassoc MOINSU
 
 %%
@@ -39,11 +39,11 @@ resultat:   expression		{ *pT = $1; }
 expression: 
     expression '+' expression	{ $$ = newBinaryAST('+',$1,$3); }
   | expression '-' expression	{ $$ = newBinaryAST('-',$1,$3); }
-  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
   | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
-  | expression '/' expression	{ $$ = newBinaryAST('/',$1,$3); }
+  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
   | '(' expression ')'		{ $$ = $2; }
-  | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
+  | '-' expression %prec MOINSU	{ $$ = newOpeBoolAST(6,$2, NULL); }
+  | '-' expression %prec OPERATIONBOOL	{ $$ = newUnaryAST('-',$2); }
   | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
   | NOMBRE			{ $$ = newLeafAST($1); } 
   | BOOLEAN     { $$ = newBooleanAST($1); } 
