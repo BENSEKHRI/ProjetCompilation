@@ -18,8 +18,8 @@ result: expression
 expression:
         expression '+' expression
     |   expression '-' expression
-    |   expression '%' expression
     |   expression '*' expression
+    |   expression '%' expression
     |   '(' expression ')'
     |   '-' expression %prec UMOINS
     |   NUMBER

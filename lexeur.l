@@ -9,10 +9,10 @@
 
 %%
 
-0|[1-9][0-9]*|[1-9][0-9]*,[1-9][0-9]*   { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
-[ \t\n]           { ; } // ignore space and tab
-[;]            { return 0; } // exit sucessfully
-.               { printf("lex::char %s\n",yytext); return yytext[0]; } // other one-
+0|[1-9][0-9]*|[0-9]*\.[0-9]+    { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
+[ \t\n]                         { ; } // ignore space and tab
+[;]                             { return 0; } // exit sucessfully
+.                               { printf("lex::char %s\n",yytext); return yytext[0]; } // other one-
 
 %%
 int yywrap(void){ return 1; } // function called at the end of the file
