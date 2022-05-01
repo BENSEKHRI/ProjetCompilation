@@ -17,14 +17,14 @@
 
 %union {
   struct _tree* exp;
-  int num;
+  double num;
 } ;
 
 %type  <exp> expression
 %token <num> NOMBRE
 
 %left '+' '-'
-%left '%' '*' '/'
+%left '%' '*'
 %nonassoc MOINSU
 
 %%
@@ -32,15 +32,15 @@
 resultat:   expression		{ *pT = $1; }
 
 expression: 
-    expression '+' expression	{ $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	{ $$ = newBinaryAST('-',$1,$3); }
-  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
-  | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
-  | expression '/' expression	{ $$ = newBinaryAST('/',$1,$3); }
-  | '(' expression ')'		{ $$ = $2; }
+    expression '+' expression	  { $$ = newBinaryAST('+',$1,$3); }
+  | expression '-' expression	  { $$ = newBinaryAST('-',$1,$3); }
+  | expression '*' expression	  { $$ = newBinaryAST('*',$1,$3); }
+  | expression '%' expression	  { $$ = newBinaryAST('%',$1,$3); }
+  | '(' expression ')'		      { $$ = $2; }
   | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
-  | NOMBRE			{ $$ = newLeafAST($1); } 
+  | NOMBRE			                { $$ = newLeafAST($1); } 
   ;
+
 
 %%
 

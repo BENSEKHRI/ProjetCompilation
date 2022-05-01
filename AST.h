@@ -3,8 +3,8 @@
 
 /* unary-and-binary tree structure */
 struct _tree {
-  char car;                    	/* char for arithmetic operation */
-  int val;			/* int  for value */
+  char car;               /* char for arithmetic operation */
+  double val;			        /* double  for value */
   struct _tree* left;    	/* used for unary node but NULL if leaf */
   struct _tree* right;   	/* NULL if unary node or leaf*/
 };
@@ -18,7 +18,7 @@ AST newBinaryAST(char car, AST left, AST right);
 AST newUnaryAST(char car, AST son);
 
 /* create an AST leaf from a value */
-AST newLeafAST(int val);
+AST newLeafAST(double val);
 
 /* delete an AST */
 void freeAST(AST t);
@@ -31,6 +31,5 @@ void code (AST t);
 
 /* write a post-fix AST in a file*/
 void echoCodeInFile (AST t, char const *filename);
-
 
 #endif // !_AST_H_

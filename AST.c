@@ -22,7 +22,7 @@ AST newUnaryAST(char car, AST son)
 }
 
 /* create an AST leaf from a value */
-AST newLeafAST(int val)
+AST newLeafAST(double val)
 {
   AST t=(struct _tree*) malloc(sizeof(struct _tree));
   if (t!=NULL){	/* malloc ok */
@@ -50,7 +50,7 @@ void printAST(AST t)
     printf("[ ");
     printAST(t->left);
     /* check if node is car|val */
-    if (t->left==NULL) printf(":%d: ",t->val); else printf(":%c: ",t->car);
+    if (t->left==NULL) printf(":%.2lf : ",t->val); else printf(":%c: ",t->car);
     printAST(t->right);
     printf("] ");
   }
@@ -65,7 +65,7 @@ void code (AST t) {
   if (t!=NULL) {   
     code(t->left);
     if (t->left==NULL) {
-      printf("CsteNb %d\n",t->val);       
+      printf("CsteNb %.2lf \n",t->val);       
     }
     else if (t->right == NULL) 
       printf("NegNb\n");
@@ -78,18 +78,13 @@ void code (AST t) {
           break;
         case '-':
           printf("SubiNb\n");
-          break;
-        case '%':
-          printf("ModuNb\n");
           break;  
         case '*':
           printf("MultNb\n");
-          break;   
-        case '/':
-          printf("DiviNb\n");
-          break;                                
-        default: printf("unknown\n");
+          break;                            
           break;
+        case '%':
+          printf("ModuNb\n");
       }
     }
   }   
@@ -108,7 +103,7 @@ void echoCodeInFile (AST t, char const *filename) {
     if (t != NULL) {
       echoCodeInFile(t->left, filename);
       if (t->left==NULL) {
-        fprintf(f,"CsteNb %d\n", t->val);
+        fprintf(f,"CsteNb %.2lf \n", t->val);
       } 
       else if (t->right == NULL) {
         fseek(f, 0, SEEK_END);
@@ -126,20 +121,14 @@ void echoCodeInFile (AST t, char const *filename) {
             fseek(f, 0, SEEK_END);
             fprintf(f,"SubiNb\n");
             break;
+          case '*':
+            fseek(f, 0, SEEK_END);
+            fprintf(f,"MultNb\n");
+            break;                                      
           case '%':
             fseek(f, 0, SEEK_END);
             fprintf(f,"ModuNb\n");
             break; 
-          case '*':
-            fseek(f, 0, SEEK_END);
-            fprintf(f,"MultNb\n");
-            break;  
-          case '/':
-            fseek(f, 0, SEEK_END);
-            fprintf(f,"DiviNb\n");
-            break;                                     
-          default: fprintf(f,"unknown\n");
-            break;
         }
       }
       fclose(f);
@@ -149,4 +138,3 @@ void echoCodeInFile (AST t, char const *filename) {
     exit(1);
   }
 }
-
