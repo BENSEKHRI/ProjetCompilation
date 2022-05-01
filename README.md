@@ -55,17 +55,66 @@ Les test de fonctionnalité qui ont été mené sont les suivants:
 
 * Un type de base unic : Nombre => entiers
 12;
-lex::NUMBER 12
+lex::NOMBRE 12
 
 Parsing:: syntax OK
+
+
+/*----------.
+|    AST    |
+`----------*/
+[ :12: ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 12
+Halt
+
+
+-12;
+lex::char -
+lex::NOMBRE 12
+
+Parsing:: syntax OK
+
+Root symbol:: -
+
+/*----------.
+|    AST    |
+`----------*/
+[ :-: [ :12: ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 12
+NegNb
+Halt
+
 
 * Opérations arithmétiques ("+", "-" et "*").
-1+9;     
-lex::NUMBER 1
+1+9;
+lex::NOMBRE 1
 lex::char +
-lex::NUMBER 9
+lex::NOMBRE 9
 
 Parsing:: syntax OK
+
+Root symbol:: +
+
+/*----------.
+|    AST    |
+`----------*/
+[ [ :9: ] :+: [ :1: ] ] 
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 1
+CsteNb 9
+AddiNb
+Halt
 
 * Aucune variable n'est prise en compte.
 x;
