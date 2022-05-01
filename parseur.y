@@ -28,10 +28,9 @@
 %token <boolean> BOOLEAN
 %token <opeBool>OPERATIONBOOL
 
-%left '!'
 %left OPERATIONBOOL 
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
-%left '%' '*' '/'
+%left '%' '*' 
 %nonassoc MOINSU
 
 %%
@@ -39,16 +38,16 @@
 resultat:   expression		{ *pT = $1; }
 
 expression: 
-    expression '+' expression	{ $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	{ $$ = newBinaryAST('-',$1,$3); }
-  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
-  | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
-  | expression '/' expression	{ $$ = newBinaryAST('/',$1,$3); }
-  | '(' expression ')'		{ $$ = $2; }
-  | '-' expression %prec MOINSU	{ $$ = newUnaryAST('-',$2); }
+    expression '+' expression	          { $$ = newBinaryAST('+',$1,$3); }
+  | expression '-' expression	          { $$ = newBinaryAST('-',$1,$3); }
+  | expression '*' expression	          { $$ = newBinaryAST('*',$1,$3); }
+  | expression '%' expression	          { $$ = newBinaryAST('%',$1,$3); }
+  | '(' expression ')'		              { $$ = $2; }
+  | '-' expression %prec MOINSU	        { $$ = newUnaryAST('-',$2); }
+  | OPERATIONBOOL expression            { if($1 != 6){printf("Parsing:: syntax error\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
   | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
-  | NOMBRE			{ $$ = newLeafAST($1, yylval.valCal); } 
-  | BOOLEAN         { $$ = newBooleanAST($1); } 
+  | NOMBRE			                        { $$ = newLeafAST($1); } 
+  | BOOLEAN                             { $$ = newBooleanAST($1); } 
   ;
 
 %%
