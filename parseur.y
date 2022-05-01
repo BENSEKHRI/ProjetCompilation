@@ -37,16 +37,16 @@
 resultat:   expression		{ *pT = $1; }
 
 expression: 
-    expression '+' expression	{ $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	{ $$ = newBinaryAST('-',$1,$3); }
-  | expression '*' expression	{ $$ = newBinaryAST('*',$1,$3); }
-  | expression '%' expression	{ $$ = newBinaryAST('%',$1,$3); }
-  | '(' expression ')'		{ $$ = $2; }
-  | '-' expression %prec MOINSU	{ $$ = newOpeBoolAST(6,$2, NULL); }
-  | '-' expression %prec OPERATIONBOOL	{ $$ = newUnaryAST('-',$2); }
+    expression '+' expression	          { $$ = newBinaryAST('+',$1,$3); }
+  | expression '-' expression	          { $$ = newBinaryAST('-',$1,$3); }
+  | expression '*' expression	          { $$ = newBinaryAST('*',$1,$3); }
+  | expression '%' expression	          { $$ = newBinaryAST('%',$1,$3); }
+  | '(' expression ')'		              { $$ = $2; }
+  | '-' expression %prec MOINSU	        { $$ = newUnaryAST('-',$2); }
+  | OPERATIONBOOL expression            { $$ = newOpeBoolAST(6,$2, NULL); }
   | expression OPERATIONBOOL expression { $$ = newOpeBoolAST($2,$1,$3); }
-  | NOMBRE			{ $$ = newLeafAST($1); } 
-  | BOOLEAN     { $$ = newBooleanAST($1); } 
+  | NOMBRE			                        { $$ = newLeafAST($1); } 
+  | BOOLEAN                             { $$ = newBooleanAST($1); } 
   ;
 
 %%
