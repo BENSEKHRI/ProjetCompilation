@@ -1,4 +1,4 @@
-# Compilateur JavaScript - Fragement c0.2
+# Compilateur JavaScript - Fragement c1.0
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
