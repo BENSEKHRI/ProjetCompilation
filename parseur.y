@@ -6,8 +6,11 @@
 
 
 %token NUMBER
+%token BOOLEAN
+%token OPERATIONBOOL
 
-%left '+' '-'
+%left OPERATIONBOOL 
+%left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
 %left '%' '*'
 %nonassoc UMOINS
 
@@ -22,7 +25,10 @@ expression:
     |   expression '%' expression
     |   '(' expression ')'
     |   '-' expression %prec UMOINS
+    |   OPERATIONBOOL expression
+    |   expression OPERATIONBOOL expression
     |   NUMBER
+    |   BOOLEAN
 ;
 
 
