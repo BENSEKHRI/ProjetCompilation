@@ -244,9 +244,65 @@ void printAST(AST t)
   }
 }
 
-/*-----------------------------------------------.
-| functions for manipulating the list of symbols |                 
-`-----------------------------------------------*/
+/**
+ * @brief Cette fonction permet un affichage de la sortie post fixe de l'AST
+ * 
+ * @param t l'AST
+ */
+void codeAST (AST t) {
+  if (t!=NULL) {   
+    codeAST(t->left);
+    if (t->left==NULL) {
+      if(t->val)
+        switch (t->valCal) {
+          case 1: printf("CsteNb %.0lf\n", t->val); break;  // int
+          case 2: printf("CsteNb %.2lf\n", t->val); break;  // float
+          case 3: printf("CsteNb %.2e\n", t->val); break;   // float scientific
+          case 4: printf("CsteNb NaN\n"); break;            // NaN
+          default: printf("Error Float\n"); break;
+        }
+
+      if (t->boolean)
+        switch (t->boolean) {
+          case 1: printf("CsteBo True\n"); break;
+          case 2: printf("CsteBo False\n"); break;
+          default:  printf("Error boolean\n"); break;
+        }         
+    }
+    else if (t->right == NULL) 
+      printf("NegNb\n");
+    else {
+      if (t->right && t->ifThenElse) 
+          printf("ConJmp %d\n", t->right->taille+=1);
+
+      codeAST(t->right);
+
+      if(t->car)
+        switch (t->car) {
+          case '+': printf("AddiNb\n"); break;
+          case '-': printf("SubiNb\n"); break;
+          case '%': printf("ModuNb\n"); break;  
+          case '*': printf("MultNb\n"); break;   
+          case '/': printf("DiviNb\n"); break;                                
+        }
+
+      if(t->opeBool)
+        switch (t->opeBool) {
+          case 1: printf("Equals\n"); break;
+          case 2: printf("LoEqNb\n"); break;
+          case 3: printf("GrEqNb\n"); break;
+          case 4: printf("LoStNb\n"); break;
+          case 5: printf("GrStNb\n"); break;
+          default: printf("unknown\n"); break;
+        }
+    
+      if (t->ifThenElse)
+        printf("Jump %d\n", t->ifThenElse->taille);
+
+      codeAST(t->ifThenElse);
+    }
+  }   
+}
 
 /**
  * @brief   Cette fonction permet d'ajouter un symbole au symbole déja passé dans le programme.
