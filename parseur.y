@@ -9,9 +9,10 @@
 %token BOOLEAN
 %token OPERATIONBOOL
 
-%left '?' ':'
+
 %left '!'
 %left OPERATIONBOOL 
+%left '?' ':'
 %left '+' '-' // Le + et - sont prioritaire sur les opération booléen 
 %left '*' '%' 
 %nonassoc UMOINS

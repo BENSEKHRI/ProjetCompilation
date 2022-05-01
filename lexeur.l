@@ -13,7 +13,7 @@
 [0-9]*\.?[0-9]+(e-?[0-9]+)?             { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
 NaN                                     { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
 True|False                              { printf("lex::BOOLEAN %s\n",yytext); return BOOLEAN; }  
-==|\<=|>=|<|>                           { printf("lex::OPERATIONBOOL %s\n",yytext); return OPERATIONBOOL; }  
+==|\<=|>=|<|>|"||"|&&                   { printf("lex::OPERATIONBOOL %s\n",yytext); return OPERATIONBOOL; }  
 [ \t\n] 	                            { ; } /* ignore space, tab, and line return*/
 [;]                                     { return 0; } // exit sucessfully
 .                                       { printf("lex::char %s\n",yytext); return yytext[0]; } // other one-
