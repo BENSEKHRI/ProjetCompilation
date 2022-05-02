@@ -45,7 +45,6 @@
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
-%left OPERATIONBOOL 
 %left '+' '-'           // Le + et - sont prioritaire sur les opération booléen 
 %left '*' '%' 
 %nonassoc UMOINS
@@ -64,22 +63,22 @@ programme:
 commande: 
     expression ';'                                { $$ = newCommandeExpAST($1,';'); }              
   | ';'                                           { $$ = newCommandePVirgAST(';'); }
-  | IF '(' expression ')' commande ELSE commande  { $$ = newIfThenElseAST('?',':',$1,$3,$5); }                        
+  | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("If","Else",$3,$5,$7); }                        
 ;
 
 expression: 
-    expression '+' expression	                { $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	                { $$ = newBinaryAST('-',$1,$3); }
-  | expression '*' expression	                { $$ = newBinaryAST('*',$1,$3); }
-  | expression '%' expression	                { $$ = newBinaryAST('%',$1,$3); }
-  | '(' expression ')'		                    { $$ = $2; }
+    expression '+' expression	                  { $$ = newBinaryAST('+',$1,$3); }
+  | expression '-' expression	                  { $$ = newBinaryAST('-',$1,$3); }
+  | expression '*' expression	                  { $$ = newBinaryAST('*',$1,$3); }
+  | expression '%' expression	                  { $$ = newBinaryAST('%',$1,$3); }
+  | '(' expression ')'		                      { $$ = $2; }
   | '-' expression %prec UMOINS	                { $$ = newUnaryAST('-',$2); }
   | OPERATIONBOOL expression                    { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
   | expression OPERATIONBOOL expression         { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
   | expression '?' expression ':' expression    { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
   | IDENT AFF expression                        { $$ = newAffAST($1,'=',$3); }
-  | NOMBRE			                            { $$ = newLeafAST($1, yylval.valCal); } 
-  | IDENT			                            { $$ = newVariableAST($1); } 
+  | NOMBRE			                                { $$ = newLeafAST($1, yylval.valCal); } 
+  | IDENT			                                  { $$ = newVariableAST($1); } 
   | BOOLEAN                                     { $$ = newBooleanAST($1); } 
   ;
 

@@ -35,8 +35,13 @@ typedef struct _symbole *symboles;
 /* Structure of a command */
 struct _commande_ast
 {
+  int taille;
   AST expression;
   char pVirg;
+  char* motCle1;                    /* Mot clé 1 pour les intruction exempl: IF, Else... */
+  char* motCle2;                    /* Mot clé 1 pour les intruction exempl: IF, Else... */
+  struct _commande_ast *left;       /* used for unary node but NULL if leaf */
+  struct _commande_ast *right;      /* NULL if unary node or leaf*/
   struct _commande_ast *suivant;
 };
 
@@ -110,6 +115,9 @@ commande_ast newCommandeExpAST(AST expression, char aff_pVirg);
 
 /* Create a command from a semicolon */
 commande_ast newCommandePVirgAST(char aff_pVirg);
+
+/* Create a command from a if else */
+commande_ast newCommandeIfElseAST(char* iF, char* eLse, AST son, commande_ast tHen, commande_ast elseCom);
 
 /* delete a command */
 void freeCommande(commande_ast c);

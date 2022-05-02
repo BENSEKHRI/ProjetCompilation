@@ -93,7 +93,6 @@ AST newOpeBoolAST(int opeBool, AST left, AST right)
 /* create an AST from a if then else operation and 3 AST sons */
 AST newIfThenElseAST(char car1, char car2, AST ifSon, AST thenSon, AST elseSon)
 {
-  printf("newIfThenElseAST\n");
   AST t = (struct _tree *)malloc(sizeof(struct _tree));
   if (t != NULL)
   { /* malloc ok */
@@ -709,7 +708,12 @@ commande_ast newCommandeExpAST(AST expression, char pVirg)
   if (c != NULL)
   { /* malloc ok */
     c->expression = expression;
+    c->taille += c->expression->taille;
     c->pVirg = pVirg;
+    c->left = NULL;
+    c->right = NULL;
+    c->motCle1 = NULL;
+    c->motCle2 = NULL;
   }
   else
     printf("MALLOC! ");
@@ -729,6 +733,38 @@ commande_ast newCommandePVirgAST(char pVirg)
   { /* malloc ok */
     c->pVirg = pVirg;
     c->expression = newBinaryAST(pVirg, NULL, NULL);
+    c->taille += c->expression->taille;
+    c->left = NULL;
+    c->right = NULL;
+    c->motCle1 = NULL;
+    c->motCle2 = NULL;
+  }
+  else
+    printf("MALLOC! ");
+  return c;
+}
+
+/**
+ * @brief   Cette fonction permet de créer une commande a partir de deux mots clé If et Else une expression qui est un AST et deux commandes pour le then et le else.
+ *
+ * @param iF mot clé If.
+ * @param eLse mot clé Else.
+ * @param son l'expression - AST.
+ * @param tHen la commande si True.
+ * @param elseCom la commande si False.
+ * @return commande_ast
+ */
+commande_ast newCommandeIfElseAST(char *iF, char *eLse, AST son, commande_ast tHen, commande_ast elseCom)
+{
+  commande_ast c = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
+  if (c != NULL)
+  { /* malloc ok */
+    c->motCle1 = strdup(iF);
+    c->motCle2 = strdup(eLse);
+    c->expression = son;
+    c->left = tHen;
+    c->right = elseCom;
+    c->taille += c->expression->taille;
   }
   else
     printf("MALLOC! ");
@@ -745,6 +781,10 @@ void freeCommande(commande_ast c)
   if (c != NULL)
   {
     freeAST(c->expression);
+    freeCommande(c->left);
+    freeCommande(c->right);
+    free(c->motCle1);
+    free(c->motCle2);
     free(c);
   }
 }
@@ -760,27 +800,95 @@ void printCommande(commande_ast c)
   if (c != NULL)
   {
     printf("| ");
+
     if (c->expression)
     {
+      if (c->motCle1)
+        printf(":%s: ", c->motCle1);
+
       printAST(c->expression);
-      printf(":%c: ", c->pVirg);
+      if (c->pVirg)
+        printf(":%c: ", c->pVirg);
     }
     else
       printf(":%c: ", c->pVirg);
+
+    printCommande(c->left);
+
+    if (c->motCle2)
+      printf(":%s: ", c->motCle2);
+
+    printCommande(c->right);
+
     printf("| ");
   }
 }
 
-/* print post-fix a command*/
+/**
+ * @brief Cette fonction permet un affichage de la sortie post fixe de la commande.
+ * 
+ * @param c la commande
+ */
 void codeCommande(commande_ast c)
 {
-  codeAST(c->expression);
+  if (c != NULL)
+  {
+    if (c->expression)
+      codeAST(c->expression);
+
+    if (c->left)
+    {
+      printf("CondJump %d\n", c->left->taille += 1);
+      codeCommande(c->left);
+      if (c->right)
+        printf("Jump %d\n", c->taille);
+    }
+    codeCommande(c->right);
+  }
 }
 
 /* write a post-fix command in a file*/
+/**
+ * @brief Cette fonction permet d'ecrire la sortie post fixe d'une commande dans un fichier.
+ *
+ * @param c la commmande 
+ * @param filename nom du fichier qui contiendera la sortie post fixe de l'AST
+ */
 void writeCodeCommandeInFile(commande_ast c, char const *filename)
 {
-  writeCodeASTInFile(c->expression, filename);
+  FILE *f = fopen(filename, "r+");
+  if (f != NULL)
+  {
+    fseek(f, 0, SEEK_END);
+    if (c != NULL)
+    {
+      if (c->expression) {
+        fseek(f, 0, SEEK_END);
+        writeCodeASTInFile(c->expression, filename);
+      }
+
+      if (c->left)
+      {
+        fseek(f, 0, SEEK_END);
+        fprintf(f, "CondJump %d\n", c->left->taille += 1);
+        fseek(f, 0, SEEK_END);
+        writeCodeCommandeInFile(c->left, filename);
+        if (c->right) {
+          fseek(f, 0, SEEK_END);
+          fprintf(f, "Jump %d\n", c->taille);
+        }
+      }
+
+      fseek(f, 0, SEEK_END);
+      writeCodeCommandeInFile(c->right, filename);
+      fclose(f);
+    }
+  }
+  else
+  {
+    printf("Erreur lors de lecture / création du ficheir\n");
+    exit(1);
+  }
 }
 
 /*-----------------------------------------------.
