@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement p2.1
+# Compilateur JavaScript    -   Fragement p2.2
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -45,74 +45,88 @@ gcc -o main main.c parseur.tab.c lex.yy.c
 Vous pouvez exécuter le projet sur un fichier js existant directement, et celui-ci vous diras si les instructions contenues dans le fichier sont correctes, ou bien sans fichier en argument, et cela lancera tout simplement la main en console.
 
 # Remarque
-Dans ce fragement p2.0 
+Dans ce fragement p2.1 
 si on execute sur console sans un fichier js, pour finir une instruction on tape ';' et pour finir le programme on tape '€'.
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement p0, p1 et p2.0 plus ce qui suit:
+Tous les tests du fragement p0, p1, p2.0 et p2.1 plus ce qui suit:
 
-* Un programme est maintenant une séquence de commandes, tandis  qu'une commande est soit une expression expr ; soit une nouvelle commande If(_) _ Else _ .
+* Nous ajoutons la commande vide " ;".
+* De plus, nous pouvons compacter une séquence de commandes en un seul command en appliquant les paniers {com1 ... comk}.
 
 Test N°01:
 ----------
-If(12*12>21) x=12; Else c=14;
-lex::IF If
-lex::char (
-lex::NUMBER 12
-lex::char *
-lex::NUMBER 12
-lex::OPERATIONBOOL >
-lex::NUMBER 21
-lex::char )
-lex::IDENT x
-lex::AFF =
-lex::NUMBER 12
+; €
 lex::char ;
-lex::ELSE Else
-lex::IDENT c
-lex::AFF =
-lex::NUMBER 14
-lex::char ;
-
-x=12*12%1;
-lex::IDENT x
-lex::AFF =
-lex::NUMBER 12
-lex::char *
-lex::NUMBER 12
-lex::char %
-lex::NUMBER 1
-lex::char ;
-€
 
 Parsing:: syntax OK
 
 
 Test N°02:
 ----------
+{x=12*12+12;x>=12?True:False;}€
+lex::char {
+lex::IDENT x
+lex::AFF =
+lex::NUMBER 12
+lex::char *
+lex::NUMBER 12
+lex::char +
+lex::NUMBER 12
+lex::char ;
+lex::IDENT x
+lex::OPERATIONBOOL >=
+lex::NUMBER 12
+lex::char ?
+lex::BOOLEAN True
+lex::char :
+lex::BOOLEAN False
+lex::char ;
+lex::char }
 
-Test avec le contenu du fichier toto.js qui contient ceci :  
+Parsing:: syntax OK
 
-If(True) c = 41 % 12;
-Else False && True;
+
+Test N°03:
+----------
+On exécute avec le fichier toto.js qui contient ceci :
+
+{
+    If(12 < 12 * 12) c = 2 + 3;
+    Else c = 41 - 12;;
+    x = 12;
+}
 
 ./main toto.js
 
+lex::char {
 lex::IF If
 lex::char (
-lex::BOOLEAN True
+lex::NUMBER 12
+lex::OPERATIONBOOL <
+lex::NUMBER 12
+lex::char *
+lex::NUMBER 12
 lex::char )
 lex::IDENT c
 lex::AFF =
-lex::NUMBER 41
-lex::char %
-lex::NUMBER 12
+lex::NUMBER 2
+lex::char +
+lex::NUMBER 3
 lex::char ;
 lex::ELSE Else
-lex::BOOLEAN False
-lex::OPERATIONBOOL &&
-lex::BOOLEAN True
+lex::IDENT c
+lex::AFF =
+lex::NUMBER 41
+lex::char -
+lex::NUMBER 12
 lex::char ;
+lex::char ;
+lex::IDENT x
+lex::AFF =
+lex::NUMBER 12
+lex::char ;
+lex::char }
 
 Parsing:: syntax OK

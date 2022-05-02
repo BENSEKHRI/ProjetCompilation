@@ -15,6 +15,8 @@
 %token ';'
 
 
+
+%left '{' '}'
 %left ';'
 %left AFF
 %left IF ELSE
@@ -39,6 +41,7 @@ programme:
 commande: 
         expression ';'                            
     | ';'                         
+    | '{' programme '}'                         
     | IF '(' expression ')' commande ELSE commande                         
 ;
 
