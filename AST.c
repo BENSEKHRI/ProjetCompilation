@@ -744,6 +744,21 @@ commande_ast newCommandePVirgAST(char pVirg)
   return c;
 }
 
+
+/**
+ * @brief   Cette fonction permet de créer une ommande à partir d'une séquence de commandes, c'est a dire à partir d'un programme.
+ * 
+ * @param prog la séquence de commandes
+ * @return commande_ast la commande en sortie.
+ */
+commande_ast newCommandeProg(programme_ast prog) {
+  commande_ast c = prog;
+  c->suivant = prog->suivant;
+  c->taille += c->expression->taille;
+  return c;
+}
+
+
 /**
  * @brief   Cette fonction permet de créer une commande a partir de deux mots clé If et Else une expression qui est un AST et deux commandes pour le then et le else.
  *
@@ -799,28 +814,36 @@ void printCommande(commande_ast c)
 {
   if (c != NULL)
   {
-    printf("| ");
-
-    if (c->expression)
+    if (!c->suivant) 
     {
-      if (c->motCle1)
-        printf(":%s: ", c->motCle1);
+      printf("| ");
 
-      printAST(c->expression);
-      if (c->pVirg)
+      if (c->expression)
+      {
+        if (c->motCle1)
+          printf(":%s: ", c->motCle1);
+
+        printAST(c->expression);
+        if (c->pVirg)
+          printf(":%c: ", c->pVirg);
+      }
+      else
         printf(":%c: ", c->pVirg);
+
+      printCommande(c->left);
+
+      if (c->motCle2)
+        printf(":%s: ", c->motCle2);
+
+      printCommande(c->right);
+
+      printf("| ");
     }
-    else
-      printf(":%c: ", c->pVirg);
-
-    printCommande(c->left);
-
-    if (c->motCle2)
-      printf(":%s: ", c->motCle2);
-
-    printCommande(c->right);
-
-    printf("| ");
+    else 
+    {
+      printf("lalalalalal\n");
+      printProg(c);
+    }
   }
 }
 

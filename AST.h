@@ -116,6 +116,9 @@ commande_ast newCommandeExpAST(AST expression, char aff_pVirg);
 /* Create a command from a semicolon */
 commande_ast newCommandePVirgAST(char aff_pVirg);
 
+/* Create a command from a programme */
+commande_ast newCommandeProg(programme_ast prog);
+
 /* Create a command from a if else */
 commande_ast newCommandeIfElseAST(char* iF, char* eLse, AST son, commande_ast tHen, commande_ast elseCom);
 

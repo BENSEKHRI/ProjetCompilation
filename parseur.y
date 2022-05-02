@@ -65,7 +65,7 @@ programme:
 commande: 
     expression ';'                                { $$ = newCommandeExpAST($1,';'); }              
   | ';'                                           { $$ = newCommandePVirgAST(';'); }
-  | '{' programme '}'                         
+  | '{' programme '}'                             { $$ = newCommandeProg($2); }
   | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("If","Else",$3,$5,$7); }                        
 ;
 
