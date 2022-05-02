@@ -35,7 +35,7 @@ AST newBinaryAST(char car, AST left, AST right)
 /* create an AST from a root value and one AST son */
 AST newUnaryAST(char car, AST son)
 {
-  return newBinaryAST(car, NULL, son);
+  return newBinaryAST(car, son, NULL);
 }
 
 /* create an AST leaf from a value */
@@ -126,8 +126,8 @@ AST newAffAST(char *var, char aff, AST son)
     t->taille += 1 + son->taille;
     t->var = var;
     t->aff = aff;
-    t->left = NULL;
-    t->right = son;
+    t->left = son;
+    t->right = NULL;
     t->ifThenElse = NULL;
     printf("\nval rech____-%d-_____\n", searchSymbol(SYMBOL_PROG, var));
     SYMBOL_PROG = addASymbol(SYMBOL_PROG, var);
@@ -187,18 +187,27 @@ void printAST(AST t)
   if (t != NULL)
   {
     printf("[ ");
-    printAST(t->left);
-    /* check if node is car|val */
 
-    if (t->left == NULL)
+    if (t->left)
     {
-
       if (t->var)
         printf(":%s: ", t->var);
 
       if (t->aff)
         printf(":%c: ", t->aff);
 
+      if (t->opeBool == 6)
+        printf(":!: ");
+      
+      if (t->car && !t->right)
+        printf(":%c: ", t->car);
+    }
+
+    printAST(t->left);
+    /* check if node is car|val */
+
+    if (t->left == NULL)
+    {
       if (t->car)
         printf(":%c: ", t->car);
 
@@ -232,11 +241,15 @@ void printAST(AST t)
           printf(":False: ");
           break;
         }
+
+      if (t->var)
+        printf(":%s: ", t->var);
     }
     else
     {
-      if (t->car)
+      if (t->car && t->right)
         printf(":%c: ", t->car);
+
       if (t->opeBool)
         switch (t->opeBool)
         {
@@ -255,9 +268,6 @@ void printAST(AST t)
         case 5:
           printf(":>: ");
           break;
-        case 6:
-          printf(":!: ");
-          break;
         case 7:
           printf(":||: ");
           break;
@@ -266,6 +276,7 @@ void printAST(AST t)
           break;
         }
     }
+
     printAST(t->right);
 
     if (t->car2)
@@ -286,6 +297,7 @@ void codeAST(AST t)
   if (t != NULL)
   {
     codeAST(t->left);
+
     if (t->left == NULL)
     {
       if (t->val)
@@ -318,9 +330,12 @@ void codeAST(AST t)
     }
     else if (t->right == NULL)
     {
+      if (t->aff && t->var)
+        printf("SetVar %s\n", t->var);
+
       if (t->opeBool)
         printf("Not\n");
-      else
+      else if (!t->opeBool && !t->aff && !t->var)
         printf("NegNb\n");
     }
     else
@@ -404,6 +419,9 @@ void codeAST(AST t)
 
       codeAST(t->ifThenElse);
     }
+
+    if (t->var)
+      printf("GetVar %s\n", t->var);
   }
 }
 
@@ -461,9 +479,15 @@ void writeCodeASTInFile(AST t, char const *filename)
       else if (t->right == NULL)
       {
         fseek(f, 0, SEEK_END);
+        if (t->aff && t->var)
+          fprintf(f, "SetVar %s\n", t->var);
+
+        fseek(f, 0, SEEK_END);
+
         if (t->opeBool)
           fprintf(f, "Not\n");
-        else
+
+        else if (!t->opeBool && !t->aff && !t->var)
           fprintf(f, "NegNb\n");
       }
       else
@@ -564,6 +588,11 @@ void writeCodeASTInFile(AST t, char const *filename)
         fseek(f, 0, SEEK_END);
         writeCodeASTInFile(t->ifThenElse, filename);
       }
+
+      fseek(f, 0, SEEK_END);
+      if (t->var)
+        fprintf(f, "GetVar %s\n", t->var);
+
       fclose(f);
     }
   }
