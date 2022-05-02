@@ -129,7 +129,8 @@ AST newAffAST(char *var, char aff, AST son)
     t->left = son;
     t->right = NULL;
     t->ifThenElse = NULL;
-    printf("\nval rech____-%d-_____\n", searchSymbol(SYMBOL_PROG, var));
+    // Afficher les identifiants prénsent et ajout des nouveau || modification des présent
+    searchSymbol(SYMBOL_PROG, var) ? printf("\nIDENT: %s is already present. - Update in progress...", var) : printf("\nIDENT: %s is new - Addition in progress...", var);
     SYMBOL_PROG = addASymbol(SYMBOL_PROG, var);
     printSymbol(SYMBOL_PROG);
   }
@@ -174,6 +175,7 @@ void freeAST(AST t)
 {
   if (t != NULL)
   {
+    free(t->var);
     freeAST(t->left);
     freeAST(t->right);
     freeAST(t->ifThenElse);
@@ -198,7 +200,7 @@ void printAST(AST t)
 
       if (t->opeBool == 6)
         printf(":!: ");
-      
+
       if (t->car && !t->right)
         printf(":%c: ", t->car);
     }
@@ -680,13 +682,13 @@ void freeSymbol(symboles sym)
  */
 void printSymbol(symboles sym)
 {
-  printf("\n\nIDENT = |");
+  printf("\nIDENT = |");
   while (sym != NULL)
   {
     printf(" %s |", sym->var);
     sym = sym->suivant;
   }
-  printf("\n");
+  printf("\n\n");
 }
 
 /*-----------------------------------------------.
