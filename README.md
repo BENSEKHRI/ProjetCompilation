@@ -58,13 +58,135 @@ Un programme est maintenant une séquence de commandes, tandis qu'une commande e
 
 Test N°01:
 ----------
+If(True) False; Else True; €
+lex::IF If
+lex::char (
+lex::BOOLEAN True
+lex::char )
+lex::BOOLEAN False
+lex::char ;
+lex::ELSE Else
+lex::BOOLEAN True
+lex::char ;
+
+Parsing:: syntax OK
 
 
-Test N°02:
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| :If: [ :True: ] | [ :False: ] :;: | :Else: | [ :True: ] :;: | | 
+
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteBo True
+CondJump 2
+CsteBo False
+Jump 1
+CsteBo True
+Halt
+
+Voici la sortie de la machine JS:
+...
+...
+...
+PC : 5
+Pile : [False ]
+Contexte : |
+Instruction : Halt
+
+Programme exécuté avec succes 
+
+
+
+
+Test N°02: 
 ----------
+Exécution avec le fichier toto.js qui contient : 
+If(12 < 12 * 12) c = 2 + 3;
+
+./main toto.js
+
+Else c = 41 % 12;
+lex::IF If
+lex::char (
+lex::NOMBRE 12
+lex::OPERATIONBOOL <
+lex::NOMBRE 12
+lex::char *
+lex::NOMBRE 12
+lex::char )
+lex::IDENT c
+lex::AFF =
+lex::NOMBRE 2
+lex::char +
+lex::NOMBRE 3
+lex::char ;
+
+IDENT: c is new - Addition in progress...
+IDENT = | c |
+
+lex::ELSE Else
+lex::IDENT c
+lex::AFF =
+lex::NOMBRE 41
+lex::char -
+lex::NOMBRE 12
+lex::char ;
+
+IDENT: c is already present. - Update in progress...
+IDENT = | c |
 
 
-Test N°01:
-----------
+Parsing:: syntax OK
 
-Tous les codes généré sont bien sur testé avec la machine JS.
+Root symbol:: 
+
+/*-------------------------------------.
+|    Writing the file toto.jsm    |
+`-------------------------------------*/
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| :If: [ [ :12: ] :<: [ [ :12: ] :*: [ :12: ] ] ] | [ :c: :=: [ [ :2: ] :+: [ :3: ] ] ] :;: | :Else: | [ :c: :=: [ [ :41: ] :-: [ :12: ] ] ] :;: | | 
+
+
+
+Voici le contenu du fichier toto.jsm:
+
+CsteNb 12
+CsteNb 12
+CsteNb 12
+MultNb
+LoStNb
+CondJump 5
+CsteNb 2
+CsteNb 3
+AddiNb
+SetVar c
+GetVar c
+Jump 5
+CsteNb 41
+CsteNb 12
+SubiNb
+SetVar c
+GetVar c
+Halt
+
+
+
+Voici la sortie de la machine JS: 
+...
+...
+...
+PC : 17
+Pile : [5 ]
+Contexte : ( c => 5 ),  |
+Instruction : Halt
+
+Programme exécuté avec succes 
