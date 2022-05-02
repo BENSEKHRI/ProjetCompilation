@@ -743,13 +743,13 @@ void printCommande(commande_ast c)
 /* print post-fix a command*/
 void codeCommande(commande_ast c)
 {
-  printf("Bonjour\n");
+  codeAST(c->expression);
 }
 
 /* write a post-fix command in a file*/
 void writeCodeCommandeInFile(commande_ast c, char const *filename)
 {
-  printf("Bonjour\n");
+  writeCodeASTInFile(c->expression, filename);
 }
 
 /*-----------------------------------------------.
@@ -843,11 +843,37 @@ void printProg(programme_ast prog)
 /* print post-fix a command*/
 void codeProg(programme_ast prog)
 {
-  printf("Bonjour\n");
+  if (prog)
+  {
+    commande_ast tmpCommande = prog;
+    while (tmpCommande)
+    {
+      codeCommande(tmpCommande);
+      tmpCommande = tmpCommande->suivant;
+    }
+  }
+  else
+  {
+    printf("Error - codeProg - Liste vide !\n");
+    exit(EXIT_FAILURE);
+  }
 }
 
 /* write a post-fix command in a file*/
 void writeCodeProgInFile(programme_ast prog, char const *filename)
 {
-  printf("Bonjour\n");
+  if (prog)
+  {
+    commande_ast tmpCommande = prog;
+    while (tmpCommande)
+    {
+      writeCodeCommandeInFile(tmpCommande, filename);
+      tmpCommande = tmpCommande->suivant;
+    }
+  }
+  else
+  {
+    printf("Error - writeCodeProgInFile - Liste vide !\n");
+    exit(EXIT_FAILURE);
+  }
 }
