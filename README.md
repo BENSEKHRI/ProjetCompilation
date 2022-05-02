@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement p2.0
+# Compilateur JavaScript    -   Fragement p2.1
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -50,23 +50,39 @@ si on execute sur console sans un fichier js, pour finir une instruction on tape
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement p0, p1 plus ce qui suit:
+Tous les tests du fragement p0, p1 et p2.0 plus ce qui suit:
 
-_ Les variables commencent par une lettre minuscule et peuvent être composées de lettres, de chiffres, de caractères de soulignement "_".
-— Les variables sont instanciées par l'expression 5 x = expr ; où expr est une expression quelconque. Ces variables sont toujours globales.
-— Respecter les priorités et l'associativité !
-— Les variables peuvent être utilisées à l'intérieur des expressions.
+* Un programme est maintenant une séquence de commandes, tandis  qu'une commande est soit une expression expr ; soit une nouvelle commande If(_) _ Else _ .
 
 Test N°01:
----------
-x=12+15*314;
+----------
+If(12*12>21) x=12; Else c=14;
+lex::IF If
+lex::char (
+lex::NUMBER 12
+lex::char *
+lex::NUMBER 12
+lex::OPERATIONBOOL >
+lex::NUMBER 21
+lex::char )
 lex::IDENT x
 lex::AFF =
 lex::NUMBER 12
-lex::char +
-lex::NUMBER 15
+lex::char ;
+lex::ELSE Else
+lex::IDENT c
+lex::AFF =
+lex::NUMBER 14
+lex::char ;
+
+x=12*12%1;
+lex::IDENT x
+lex::AFF =
+lex::NUMBER 12
 lex::char *
-lex::NUMBER 314
+lex::NUMBER 12
+lex::char %
+lex::NUMBER 1
 lex::char ;
 €
 
@@ -74,29 +90,29 @@ Parsing:: syntax OK
 
 
 Test N°02:
-Execusion avec le fichier toto.js qui contient ceci :
-x = 12;
-y = True && False ? 5 * 12 - 12 : 15;
+----------
 
-Sortie: ./main toto.js
+Test avec le contenu du fichier toto.js qui contient ceci :  
 
-lex::IDENT x
+If(True) c = 41 % 12;
+Else False && True;
+
+./main toto.js
+
+lex::IF If
+lex::char (
+lex::BOOLEAN True
+lex::char )
+lex::IDENT c
 lex::AFF =
+lex::NUMBER 41
+lex::char %
 lex::NUMBER 12
 lex::char ;
-lex::IDENT y
-lex::AFF =
-lex::BOOLEAN True
-lex::OPERATIONBOOL &&
+lex::ELSE Else
 lex::BOOLEAN False
-lex::char ?
-lex::NUMBER 5
-lex::char *
-lex::NUMBER 12
-lex::char -
-lex::NUMBER 12
-lex::char :
-lex::NUMBER 15
+lex::OPERATIONBOOL &&
+lex::BOOLEAN True
 lex::char ;
 
 Parsing:: syntax OK

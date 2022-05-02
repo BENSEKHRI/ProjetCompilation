@@ -8,6 +8,8 @@
 %token NUMBER
 %token BOOLEAN
 %token OPERATIONBOOL
+%token IF
+%token ELSE
 %token IDENT
 %token AFF
 %token ';'
@@ -15,6 +17,7 @@
 
 %left ';'
 %left AFF
+%left IF ELSE
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
@@ -36,6 +39,7 @@ programme:
 commande: 
         expression ';'                            
     | ';'                         
+    | IF '(' expression ')' commande ELSE commande                         
 ;
 
 expression:
