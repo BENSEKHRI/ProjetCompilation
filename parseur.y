@@ -33,12 +33,17 @@
 %token <boolean> BOOLEAN
 %token <opeBool> OPERATIONBOOL
 %token <var> IDENT
+%token IF
+%token ELSE
 %token AFF
 %token ';'
 
 
 %left ';'
 %left AFF
+%left IF ELSE
+%left '!'
+%left OPERATIONBOOL 
 %left '?' ':'
 %left OPERATIONBOOL 
 %left '+' '-'           // Le + et - sont prioritaire sur les opération booléen 
@@ -57,8 +62,9 @@ programme:
 ;
 
 commande: 
-    expression ';'              { $$ = newCommandeExpAST($1,';'); }              
-  | ';'                         { $$ = newCommandePVirgAST(';'); }
+    expression ';'                                { $$ = newCommandeExpAST($1,';'); }              
+  | ';'                                           { $$ = newCommandePVirgAST(';'); }
+  | IF '(' expression ')' commande ELSE commande  { $$ = newIfThenElseAST('?',':',$1,$3,$5); }                        
 ;
 
 expression: 
