@@ -39,6 +39,8 @@
 %token ';'
 
 
+
+%left '{' '}'
 %left ';'
 %left AFF
 %left IF ELSE
@@ -63,6 +65,7 @@ programme:
 commande: 
     expression ';'                                { $$ = newCommandeExpAST($1,';'); }              
   | ';'                                           { $$ = newCommandePVirgAST(';'); }
+  | '{' programme '}'                         
   | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("If","Else",$3,$5,$7); }                        
 ;
 
