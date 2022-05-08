@@ -51,6 +51,8 @@
 
 %%
 
+function  						    { printf("lex::FUNCTION %s\n", yytext); return FUNCTION;}
+return  						    { printf("lex::RETURN %s\n", yytext); return RETURN;}
 if  						        { printf("lex::IF %s\n", yytext); return IF;}
 else						        { printf("lex::ELSE %s\n", yytext); return ELSE;}
 do						            { printf("lex::DO %s\n", yytext); return DO;}

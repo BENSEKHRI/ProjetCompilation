@@ -33,6 +33,8 @@
 %token <boolean> BOOLEAN
 %token <opeBool> OPERATIONBOOL
 %token <var> IDENT
+%token FUNCTION
+%token RETURN
 %token IF
 %token ELSE
 %token DO
@@ -46,7 +48,7 @@
 %left '{' '}'
 %left ';'
 %left AFF
-%left IF ELSE DO WHILE FOR
+%left FUNCTION RETURN IF ELSE DO WHILE FOR
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
@@ -73,6 +75,14 @@ commande:
   | DO commande WHILE '(' expression ')'                            { $$ = newCommandeDoWhileAST("do","while",$2,$5); }               
   | WHILE '(' expression ')' commande                               { $$ = newCommandeWhileAST("while",$3,$5); }                         
   | FOR '(' expression ';' expression ';' expression ')' commande   { $$ = newCommandeForAST("for",$3, $5, $7, $9); }                       
+  | FUNCTION IDENT '(' decl_args ')' '{' programme '}'                         
+  | RETURN expression ';' 
+;
+
+decl_args: 
+        %empty
+    |   IDENT
+    |   IDENT ',' decl_args
 ;
 
 expression: 
@@ -85,11 +95,18 @@ expression:
   | OPERATIONBOOL expression                        { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
   | expression OPERATIONBOOL expression             { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
   | expression '?' expression ':' expression        { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
+  | IDENT '(' arguments ')'
   | IDENT AFF expression                            { $$ = newAffAST($1,'=',$3); }
   | NOMBRE			                                { $$ = newLeafAST($1, yylval.valCal); } 
   | IDENT			                                { $$ = newVariableAST($1); } 
   | BOOLEAN                                         { $$ = newBooleanAST($1); } 
   ;
+
+arguments: 
+        %empty 
+    |   expression
+    |   expression ','arguments
+;
 
 %%
 

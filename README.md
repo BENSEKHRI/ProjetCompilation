@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement c3.2
+# Compilateur JavaScript    -   Fragement c4.0
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -45,30 +45,37 @@ gcc -o main main.c parseur.tab.c lex.yy.c
 Vous pouvez exécuter le projet sur un fichier js existant directement, et celui-ci vous diras si les instructions contenues dans le fichier sont correctes, ou bien sans fichier en argument, et cela lancera tout simplement la main en console.
 
 # Remarque
-Dans ce fragement c3.2 
+Dans ce fragement c4.0 
 si on execute sur console sans un fichier js, pour finir une instruction on tape ';' et pour finir le programme on tape '€'.
 
 Les variable sont stocker dans une liste globale est à chaque ajout d'un identifiant on test si elle appartient ou non à la liste pour savoir si un appel d'une variable renvoi ou non une valeur.
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement c0, c1, c2, c3.0 et c3.1 plus ce qui suit:
+Tous les tests du fragement c0, c1, c2 et c3 plus ce qui suit:
 
-* La boucle for et optimisation.
+* Les fonctions:
 
 
 Test N°01:
 ----------
+On test avec le fichier toto.js qui contient ce qui suit:
 
-On teste avec le fichier toto.js qui contient ce qui suit: 
+function name(x) {
+    for (x = 0; x < 12; x + 1) {
+        x = x + 1;
+    }
+    return x;
+} 
 
-for (x = 0; x < 12; x + 1) {
-    x = x + 1;
-}
+./main toto.js
 
-
-./main toto.js 
-
+lex::FUNCTION function
+lex::IDENT name
+lex::char (
+lex::IDENT x
+lex::char )
+lex::char {
 lex::FOR for
 lex::char (
 lex::IDENT x
@@ -99,41 +106,9 @@ IDENT: x is already present. - Update in progress...
 IDENT = | x |
 
 lex::char }
+lex::RETURN return
+lex::IDENT x
+lex::char ;
+lex::char }
 
 Parsing:: syntax OK
-
-Root symbol:: 
-
-/*-------------------------------------.
-|    Writing the file toto.jsm    |
-`-------------------------------------*/
-
-/*----------.
-|    AST    |
-`----------*/
-Program:
-| :for: [ :x: :=: [ :0: ] ] [ [ :x: ] :<: [ :12: ] ] [ [ :x: ] :+: [ :1: ] ] | [ :x: :=: [ [ :x: ] :+: [ :1: ] ] ] :;: | | 
-
-
-Voici le contenue du fichier toto.jsm :
-
-CsteNb 0
-SetVar x
-GetVar x
-GetVar x
-CsteNb 12
-LoStNb
-CondJump 9
-GetVar x
-CsteNb 1
-AddiNb
-SetVar x
-GetVar x
-GetVar x
-CsteNb 1
-AddiNb
-Jump -9
-Halt
-
-
-Le problème est juste dans les offsets.
