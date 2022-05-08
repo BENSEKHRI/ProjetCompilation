@@ -18,7 +18,9 @@
 %union {
   struct _commande_ast* prog;
   struct _commande_ast* com;
+  struct _decl_args* dArg;
   struct _tree* exp;
+  struct _arguments* args;
   double num;
   int valCal;
   int boolean;
@@ -28,7 +30,9 @@
 
 %type  <prog> programme
 %type  <com> commande
+%type  <dArg> decl_args
 %type  <exp> expression
+%type  <args> arguments
 %token <num> NOMBRE
 %token <boolean> BOOLEAN
 %token <opeBool> OPERATIONBOOL
@@ -43,8 +47,6 @@
 %token AFF
 %token ';'
 
-
-
 %left '{' '}'
 %left ';'
 %left AFF
@@ -55,7 +57,6 @@
 %left '+' '-'           // Le + et - sont prioritaire sur les opération booléen 
 %left '*' '%' 
 %nonassoc UMOINS
-
 
 %%
 
@@ -75,14 +76,14 @@ commande:
   | DO commande WHILE '(' expression ')'                            { $$ = newCommandeDoWhileAST("do","while",$2,$5); }               
   | WHILE '(' expression ')' commande                               { $$ = newCommandeWhileAST("while",$3,$5); }                         
   | FOR '(' expression ';' expression ';' expression ')' commande   { $$ = newCommandeForAST("for",$3, $5, $7, $9); }                       
-  | FUNCTION IDENT '(' decl_args ')' '{' programme '}'                         
-  | RETURN expression ';' 
+  | FUNCTION IDENT '(' decl_args ')' '{' programme '}'              { $$ = newCommandeFunAST("function",$2, $4, $7); }
+  | RETURN expression ';'                                           { $$ = newCommandeRetAST("return",$2); }
 ;
 
 decl_args: 
-        %empty
-    |   IDENT
-    |   IDENT ',' decl_args
+        %empty                  { $$ = newDeclArgEmpty(); }    
+    |   IDENT ',' decl_args     { $$ = newDeclArgIdentDA($1,$3); }
+    |   IDENT                   { $$ = newDeclArgIdent($1); }
 ;
 
 expression: 
@@ -95,17 +96,17 @@ expression:
   | OPERATIONBOOL expression                        { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
   | expression OPERATIONBOOL expression             { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
   | expression '?' expression ':' expression        { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
-  | IDENT '(' arguments ')'
   | IDENT AFF expression                            { $$ = newAffAST($1,'=',$3); }
+  | IDENT '(' arguments ')'                         { $$ = newIdentArgAST($1,$3); }
   | NOMBRE			                                { $$ = newLeafAST($1, yylval.valCal); } 
   | IDENT			                                { $$ = newVariableAST($1); } 
   | BOOLEAN                                         { $$ = newBooleanAST($1); } 
   ;
 
 arguments: 
-        %empty 
-    |   expression
-    |   expression ','arguments
+        %empty                      { $$ = newArgumentsEmpty(); }
+    |   expression                  { $$ = newArgumentsExp($1); }
+    |   expression ','arguments     { $$ = newArgumentsExpArg($1,$3); }
 ;
 
 %%

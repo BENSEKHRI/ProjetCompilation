@@ -169,6 +169,27 @@ AST newVariableAST(char *var)
   }
 }
 
+/**
+ * @brief   Cette fonction permet de créer une nouvvelle AST à partir d'un identifiant et une liste d'argument.
+ *
+ * @param ident l'identifiant.
+ * @param args la list des arguments.
+ * @return AST
+ */
+AST newIdentArgAST(char *ident, arguments args)
+{
+  AST t = (struct _tree *)malloc(sizeof(struct _tree));
+  if (t != NULL)
+  { /* malloc ok */
+    t->taille++;
+    t->var = strdup(ident);
+    t->arguments = args;
+  }
+  else
+    printf("MALLOC! ");
+  return t;
+}
+
 /* delete an AST */
 void freeAST(AST t)
 {
@@ -178,6 +199,7 @@ void freeAST(AST t)
     freeAST(t->left);
     freeAST(t->right);
     freeAST(t->ifThenElse);
+    freeArguments(t->arguments);
     free(t);
   }
 }
@@ -284,6 +306,9 @@ void printAST(AST t)
       printf(":%c: ", t->car2);
 
     printAST(t->ifThenElse);
+    if (t->arguments)
+      printArguments(t->arguments);
+    
     printf("] ");
   }
 }
@@ -870,15 +895,15 @@ commande_ast newCommandeWhileAST(char *wHile, AST son, commande_ast com)
 
 /**
  * @brief   Cette fonction permet de créer une commande à partir d'un mot clé for de trois expréssion et d'une commande à exécuter dans le for.
- * 
- * @param fOr le mot clé for 
- * @param son1 première expression 
- * @param son2 deuxième expression 
- * @param son3 troisième expression 
- * @param com la commande à exécuter 
- * @return commande_ast 
+ *
+ * @param fOr le mot clé for
+ * @param son1 première expression
+ * @param son2 deuxième expression
+ * @param son3 troisième expression
+ * @param com la commande à exécuter
+ * @return commande_ast
  */
-commande_ast newCommandeForAST(char *fOr, AST son1, AST son2, AST son3, commande_ast com) 
+commande_ast newCommandeForAST(char *fOr, AST son1, AST son2, AST son3, commande_ast com)
 {
   commande_ast c = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
   if (c != NULL)
@@ -889,6 +914,51 @@ commande_ast newCommandeForAST(char *fOr, AST son1, AST son2, AST son3, commande
     c->expression3 = son3;
     c->left = com;
     c->taille += com->taille;
+  }
+  else
+    printf("MALLOC! ");
+  return c;
+}
+
+/**
+ * @brief   Cette fonction permet de créer une nouvelle commande d'une "fonction"
+ *
+ * @param fUn mot clé function
+ * @param ident le nom de la fonction
+ * @param dArg Les arguments de la fun
+ * @param prog le prog de la fun
+ * @return commande_ast
+ */
+commande_ast newCommandeFunAST(char *fUn, char *ident, decl_args dArg, programme_ast prog)
+{
+  commande_ast c = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
+  if (c != NULL)
+  { /* malloc ok */
+    if (prog)
+      c = copyList(prog);
+    c->motCle1 = strdup(fUn);
+    c->nameFun = strdup(ident);
+    c->decl_args = dArg;
+  }
+  else
+    printf("MALLOC! ");
+  return c;
+}
+
+/**
+ * @brief   Cette fonction permet de créer une commande d'un return pour une function.
+ *
+ * @param rEturn le mot clé return
+ * @param exp l'exression retournée.
+ * @return commande_ast
+ */
+commande_ast newCommandeRetAST(char *rEturn, AST exp)
+{
+  commande_ast c = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
+  if (c != NULL)
+  { /* malloc ok */
+    c->motCle2 = strdup(rEturn);
+    c->expression = exp;
   }
   else
     printf("MALLOC! ");
@@ -909,7 +979,7 @@ void freeCommande(commande_ast c)
     freeAST(c->expression3);
     freeCommande(c->left);
     freeCommande(c->right);
-    freeCommande(c->next);
+    freeDeclArg(c->decl_args);
     free(c->motCle1);
     free(c->motCle2);
     free(c);
@@ -928,10 +998,19 @@ void printCommande(commande_ast c)
   {
     printf("| ");
 
+    if (c->decl_args && c->motCle1 && c->nameFun && strcmp(c->motCle1, "function") == 0)
+    {
+      printf(":%s: ", c->motCle1);
+      printf(":%s: ", c->nameFun);
+      printDeclArg(c->decl_args);
+      printf("\n\t");
+    }
+
     if (c->expression)
     {
-      if (c->motCle1)
-        printf(":%s: ", c->motCle1);
+
+      if (c->motCle2 && strcmp(c->motCle2, "return") == 0)
+        printf(":%s: ", c->motCle2);
 
       if (c->motCle1)
       {
@@ -955,7 +1034,7 @@ void printCommande(commande_ast c)
 
     printCommande(c->left);
 
-    if (c->motCle2)
+    if (c->motCle2 && strcmp(c->motCle2, "return") != 0)
       printf(":%s: ", c->motCle2);
 
     printCommande(c->right);
@@ -965,8 +1044,7 @@ void printCommande(commande_ast c)
 
     printf("| ");
 
-    if (c->next)
-    {
+    if (c->next) {
       printf("\n\t");
       printCommande(c->next);
     }
@@ -1014,7 +1092,7 @@ void codeCommande(commande_ast c)
 
       if (strcmp(c->motCle1, "while") == 0)
         printf("Jump -%d\n", c->left->taille + 1);
-      
+
       if (strcmp(c->motCle1, "for") == 0)
         printf("Jump -%d\n", c->left->taille);
     }
@@ -1065,7 +1143,8 @@ void writeCodeCommandeInFile(commande_ast c, char const *filename)
         }
       }
 
-      if (c->expression2) {
+      if (c->expression2)
+      {
         fseek(f, 0, SEEK_END);
         writeCodeASTInFile(c->expression2, filename);
       }
@@ -1104,9 +1183,10 @@ void writeCodeCommandeInFile(commande_ast c, char const *filename)
           fprintf(f, "Jump -%d\n", c->left->taille + 1);
         }
 
-        if (strcmp(c->motCle1, "for") == 0) {
+        if (strcmp(c->motCle1, "for") == 0)
+        {
           fseek(f, 0, SEEK_END);
-          fprintf(f,"Jump -%d\n", c->left->taille);
+          fprintf(f, "Jump -%d\n", c->left->taille);
         }
       }
 
@@ -1264,6 +1344,200 @@ void writeCodeProgInFile(programme_ast prog, char const *filename)
   else
   {
     printf("Error - writeCodeProgInFile - Liste vide !\n");
+    exit(EXIT_FAILURE);
+  }
+}
+
+/*-----------------------------------------------.
+|                   decl_args                    |
+`-----------------------------------------------*/
+/**
+ * @brief   Cette fonction permet de créer un decl_args à partir de rien.
+ *
+ * @return decl_args
+ */
+decl_args newDeclArgEmpty()
+{
+  decl_args d = NULL;
+  return d;
+}
+
+/**
+ * @brief   Cette fonction permet de créer un decl_args à partir d'un identifiant.
+ *
+ * @param ident l'identifiant
+ * @return decl_args
+ */
+decl_args newDeclArgIdent(char *ident)
+{
+  decl_args d = (struct _decl_args *)malloc(sizeof(struct _decl_args));
+  if (d != NULL)
+  { /* malloc ok */
+    d->ident = strdup(ident);
+  }
+  else
+    printf("MALLOC! ");
+  return d;
+}
+
+/**
+ * @brief   Cette fonction permet de créer un decl_args à partir d'un identifiant et d'une liste de "decl_args"
+ *
+ * @param ident l'identifiant
+ * @param dArg la liste de decl_args
+ * @return decl_args
+ */
+decl_args newDeclArgIdentDA(char *ident, decl_args dArg)
+{
+  decl_args d = (struct _decl_args *)malloc(sizeof(struct _decl_args));
+  if (d != NULL)
+  { /* malloc ok */
+    d->ident = strdup(ident);
+    d->suivant = dArg;
+  }
+  else
+    printf("MALLOC! ");
+  return d;
+}
+
+/**
+ * @brief   Cette fonction permet de supprimer et libérer la mémoire alloué par un decl_args
+ *
+ * @param dArg le decl_args
+ */
+void freeDeclArg(decl_args dArg)
+{
+  if (dArg != NULL)
+  {
+    decl_args dArgSuivant = NULL;
+    while (dArg)
+    {
+      dArgSuivant = dArg->suivant;
+      free(dArg->ident);
+      free(dArg);
+      dArg = dArgSuivant;
+    }
+  }
+}
+
+/**
+ * @brief   Cette fonction permet d'afficher la liste des arguments en déclaration.
+ *
+ * @param dArg la liste des arguments en déclaration.
+ */
+void printDeclArg(decl_args dArg)
+{
+  if (dArg)
+  {
+    printf("( ");
+    decl_args tmpDArg = dArg;
+    while (tmpDArg)
+    {
+      printf(":%s: ", tmpDArg->ident);
+      tmpDArg = tmpDArg->suivant;
+      if (tmpDArg)
+        printf(", ");
+    }
+    printf(") ");
+  }
+  else
+  {
+    printf("Error - printDeclArg - Liste vide !\n");
+    exit(EXIT_FAILURE);
+  }
+}
+
+/*-----------------------------------------------.
+|                    arguments                   |
+`-----------------------------------------------*/
+/**
+ * @brief   Cette fonction permet créer des argument à partir de rien.
+ *
+ * @return arguments
+ */
+arguments newArgumentsEmpty()
+{
+  arguments a = NULL;
+  return a;
+}
+
+/**
+ * @brief   Cette fonction permet créer des argument à partir d'une expréssion.
+ *
+ * @param expression l'expréssion qui est un AST
+ * @return arguments
+ */
+arguments newArgumentsExp(AST expression)
+{
+  arguments a = (struct _arguments *)malloc(sizeof(struct _arguments));
+  if (a != NULL)
+  { /* malloc ok */
+    a->expression = expression;
+  }
+  else
+    printf("MALLOC! ");
+  return a;
+}
+
+/**
+ * @brief   Cette fonction permet créer des argument à partir d'une expréssion et une liste d'arguments.
+ *
+ * @param expression l'expression qui est un AST
+ * @param args la liste des arguments
+ * @return arguments
+ */
+arguments newArgumentsExpArg(AST expression, arguments args)
+{
+  arguments a = (struct _arguments *)malloc(sizeof(struct _arguments));
+  if (a != NULL)
+  { /* malloc ok */
+    a->expression = expression;
+    a->suivant = args;
+  }
+  else
+    printf("MALLOC! ");
+  return a;
+}
+
+/**
+ * @brief   Cette fonction permet de supprimer et libérer la mémoire allouée par un arguments
+ *
+ * @param args la liste des arguments.
+ */
+void freeArguments(arguments args)
+{
+  if (args != NULL)
+  {
+    arguments argsSuivant = NULL;
+    while (args)
+    {
+      argsSuivant = args->suivant;
+      freeAST(args->expression);
+      free(args);
+      args = argsSuivant;
+    }
+  }
+}
+
+/**
+ * @brief   Cette fonction permet d'afficher une liste d'arguments.
+ * 
+ * @param args la liste des arguments.
+ */
+void printArguments(arguments args) 
+{
+  if (args)
+  {
+    arguments tmpArgs = args;
+    while (tmpArgs)
+    {
+      printAST(tmpArgs->expression);
+      tmpArgs = tmpArgs->suivant;
+    }
+  }
+  else
+  {
+    printf("Error - printArguments - Liste vide !\n");
     exit(EXIT_FAILURE);
   }
 }
