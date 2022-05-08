@@ -52,12 +52,12 @@ si on execute sur console sans un fichier js, pour finir une instruction on tape
 Les test de fonctionnalité qui ont été mené sont les suivants: 
 Tous les tests du fragement p0, p1 et p2.0 plus ce qui suit:
 
-* Un programme est maintenant une séquence de commandes, tandis  qu'une commande est soit une expression expr ; soit une nouvelle commande If(_) _ Else _ .
+* Un programme est maintenant une séquence de commandes, tandis  qu'une commande est soit une expression expr ; soit une nouvelle commande if(_) _ else _ .
 
 Test N°01:
 ----------
-If(12*12>21) x=12; Else c=14;
-lex::IF If
+if(12*12>21) x=12; else c=14;
+lex::IF if
 lex::char (
 lex::NUMBER 12
 lex::char *
@@ -69,7 +69,7 @@ lex::IDENT x
 lex::AFF =
 lex::NUMBER 12
 lex::char ;
-lex::ELSE Else
+lex::ELSE else
 lex::IDENT c
 lex::AFF =
 lex::NUMBER 14
@@ -94,12 +94,12 @@ Test N°02:
 
 Test avec le contenu du fichier toto.js qui contient ceci :  
 
-If(True) c = 41 % 12;
-Else False && True;
+if(True) c = 41 % 12;
+else False && True;
 
 ./main toto.js
 
-lex::IF If
+lex::IF if
 lex::char (
 lex::BOOLEAN True
 lex::char )
@@ -109,7 +109,7 @@ lex::NUMBER 41
 lex::char %
 lex::NUMBER 12
 lex::char ;
-lex::ELSE Else
+lex::ELSE else
 lex::BOOLEAN False
 lex::OPERATIONBOOL &&
 lex::BOOLEAN True
