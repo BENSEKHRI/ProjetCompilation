@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement c3.1
+# Compilateur JavaScript    -   Fragement c3.2
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -45,76 +45,26 @@ gcc -o main main.c parseur.tab.c lex.yy.c
 Vous pouvez exécuter le projet sur un fichier js existant directement, et celui-ci vous diras si les instructions contenues dans le fichier sont correctes, ou bien sans fichier en argument, et cela lancera tout simplement la main en console.
 
 # Remarque
-Dans ce fragement c3.1 
+Dans ce fragement c3.2 
 si on execute sur console sans un fichier js, pour finir une instruction on tape ';' et pour finir le programme on tape '€'.
 
 Les variable sont stocker dans une liste globale est à chaque ajout d'un identifiant on test si elle appartient ou non à la liste pour savoir si un appel d'une variable renvoi ou non une valeur.
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement c0, c1, c2 et c3.0 plus ce qui suit:
+Tous les tests du fragement c0, c1, c2, c3.0 et c3.1 plus ce qui suit:
 
-* La boucle while : 
+* La boucle for et optimisation.
 
 
 Test N°01:
 ----------
 
-On exécute le fichier toto.js qui contient le code suivant: 
-while (12 == 12) {
-    c = 1 + 3;
+On teste avec le fichier toto.js qui contient ce qui suit: 
+
+for (x = 0; x < 12; x + 1) {
+    x = x + 1;
 }
 
+
 ./main toto.js 
-
-lex::WHILE while
-lex::char (
-lex::NOMBRE 12
-lex::OPERATIONBOOL ==
-lex::NOMBRE 12
-lex::char )
-lex::char {
-lex::IDENT c
-lex::AFF =
-lex::NOMBRE 1
-lex::char +
-lex::NOMBRE 3
-lex::char ;
-
-IDENT: c is new - Addition in progress...
-IDENT = | c |
-
-lex::char }
-
-Parsing:: syntax OK
-
-Root symbol:: 
-
-/*-------------------------------------.
-|    Writing the file toto.jsm    |
-`-------------------------------------*/
-
-/*----------.
-|    AST    |
-`----------*/
-Program:
-| :while: [ [ :12: ] :==: [ :12: ] ] | [ :c: :=: [ [ :1: ] :+: [ :3: ] ] ] :;: | | 
-
-
-Voici le résultat dans toto.jsm :
-
-CsteNb 12
-CsteNb 12
-Equals
-CondJump 9
-CsteNb 1
-CsteNb 3
-AddiNb
-SetVar c
-GetVar c
-Jump -10
-Halt
-
-On remarque que les offset sont faux dans quelques cas. 
-
-

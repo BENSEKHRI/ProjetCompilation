@@ -55,6 +55,7 @@ if  						        { printf("lex::IF %s\n", yytext); return IF;}
 else						        { printf("lex::ELSE %s\n", yytext); return ELSE;}
 do						            { printf("lex::DO %s\n", yytext); return DO;}
 while						        { printf("lex::WHILE %s\n", yytext); return WHILE;}
+for						            { printf("lex::FOR %s\n", yytext); return FOR;}
 0|[1-9][0-9]*  	                    { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 1; return NOMBRE; } 
 [0-9]*\.[0-9]+  	                { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 2; return NOMBRE;}
 [0-9]*\.?[0-9]+(e-?[0-9]+)?         { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 3; return NOMBRE;}

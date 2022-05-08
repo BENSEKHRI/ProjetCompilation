@@ -37,6 +37,7 @@
 %token ELSE
 %token DO
 %token WHILE
+%token FOR
 %token AFF
 %token ';'
 
@@ -45,7 +46,7 @@
 %left '{' '}'
 %left ';'
 %left AFF
-%left IF ELSE DO WHILE
+%left IF ELSE DO WHILE FOR
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
@@ -65,28 +66,29 @@ programme:
 ;
 
 commande: 
-    expression ';'                                { $$ = newCommandeExpAST($1,';'); }              
-  | ';'                                           { $$ = newCommandePVirgAST(';'); }
-  | '{' programme '}'                             { $$ = newCommandeProg($2); }
-  | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("if","else",$3,$5,$7); }                        
-  | DO commande WHILE '(' expression ')'          { $$ = newCommandeDoWhileAST("do","while",$2,$5); }               
-  | WHILE '(' expression ')' commande             { $$ = newCommandeWhileAST("while",$3,$5); }                         
+    expression ';'                                                  { $$ = newCommandeExpAST($1,';'); }              
+  | ';'                                                             { $$ = newCommandePVirgAST(';'); }
+  | '{' programme '}'                                               { $$ = newCommandeProg($2); }
+  | IF '(' expression ')' commande ELSE commande                    { $$ = newCommandeIfElseAST("if","else",$3,$5,$7); }                        
+  | DO commande WHILE '(' expression ')'                            { $$ = newCommandeDoWhileAST("do","while",$2,$5); }               
+  | WHILE '(' expression ')' commande                               { $$ = newCommandeWhileAST("while",$3,$5); }                         
+  | FOR '(' expression ';' expression ';' expression ')' commande   { $$ = newCommandeWhileAST("while",$3,$5); }                       
 ;
 
 expression: 
-    expression '+' expression	                  { $$ = newBinaryAST('+',$1,$3); }
-  | expression '-' expression	                  { $$ = newBinaryAST('-',$1,$3); }
-  | expression '*' expression	                  { $$ = newBinaryAST('*',$1,$3); }
-  | expression '%' expression	                  { $$ = newBinaryAST('%',$1,$3); }
-  | '(' expression ')'		                      { $$ = $2; }
-  | '-' expression %prec UMOINS	                { $$ = newUnaryAST('-',$2); }
-  | OPERATIONBOOL expression                    { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
-  | expression OPERATIONBOOL expression         { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
-  | expression '?' expression ':' expression    { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
-  | IDENT AFF expression                        { $$ = newAffAST($1,'=',$3); }
+    expression '+' expression	                    { $$ = newBinaryAST('+',$1,$3); }
+  | expression '-' expression	                    { $$ = newBinaryAST('-',$1,$3); }
+  | expression '*' expression	                    { $$ = newBinaryAST('*',$1,$3); }
+  | expression '%' expression	                    { $$ = newBinaryAST('%',$1,$3); }
+  | '(' expression ')'		                        { $$ = $2; }
+  | '-' expression %prec UMOINS	                    { $$ = newUnaryAST('-',$2); }
+  | OPERATIONBOOL expression                        { if($1 != 6){printf("Parsing:: syntax error - expression ! _\n"); return 1;} else $$ = newOpeBoolAST($1,$2, NULL); }
+  | expression OPERATIONBOOL expression             { if($2 == 6){printf("Parsing:: syntax error - expression _ ! _ \n"); return 1;} else $$ = newOpeBoolAST($2,$1,$3); }
+  | expression '?' expression ':' expression        { $$ = newIfThenElseAST('?',':',$1,$3,$5); }
+  | IDENT AFF expression                            { $$ = newAffAST($1,'=',$3); }
   | NOMBRE			                                { $$ = newLeafAST($1, yylval.valCal); } 
-  | IDENT			                                  { $$ = newVariableAST($1); } 
-  | BOOLEAN                                     { $$ = newBooleanAST($1); } 
+  | IDENT			                                { $$ = newVariableAST($1); } 
+  | BOOLEAN                                         { $$ = newBooleanAST($1); } 
   ;
 
 %%
