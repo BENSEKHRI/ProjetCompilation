@@ -93,15 +93,15 @@ Test N°03:
 On exécute avec le fichier toto.js qui contient ceci :
 
 {
-    If(12 < 12 * 12) c = 2 + 3;
-    Else c = 41 - 12;;
+    if(12 < 12 * 12) c = 2 + 3;
+    else c = 41 - 12;;
     x = 12;
 }
 
 ./main toto.js
 
 lex::char {
-lex::IF If
+lex::IF if
 lex::char (
 lex::NUMBER 12
 lex::OPERATIONBOOL <
@@ -115,7 +115,7 @@ lex::NUMBER 2
 lex::char +
 lex::NUMBER 3
 lex::char ;
-lex::ELSE Else
+lex::ELSE else
 lex::IDENT c
 lex::AFF =
 lex::NUMBER 41
