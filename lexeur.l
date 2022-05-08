@@ -18,6 +18,7 @@ if  						            { printf("lex::IF %s\n", yytext); return IF;}
 else						            { printf("lex::ELSE %s\n", yytext); return ELSE;}
 do						                { printf("lex::DO %s\n", yytext); return DO;}
 while						            { printf("lex::WHILE %s\n", yytext); return WHILE;}
+for						                { printf("lex::FOR %s\n", yytext); return FOR;}
 [a-zA-Z_][a-zA-Z0-9_]*                  { printf("lex::IDENT %s\n",yytext); return IDENT;}
 =							            { printf("lex::AFF %s\n", yytext); return AFF;} 
 [ \t\n] 	                            { ; } /* ignore space, tab, and line return*/

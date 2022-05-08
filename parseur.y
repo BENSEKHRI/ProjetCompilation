@@ -19,7 +19,7 @@
 %left '{' '}'
 %left ';'
 %left AFF
-%left IF ELSE DO WHILE
+%left IF ELSE DO WHILE FOR
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
@@ -45,6 +45,7 @@ commande:
     | IF '(' expression ')' commande ELSE commande                         
     | DO commande WHILE '(' expression ')'                         
     | WHILE '(' expression ')' commande                         
+    | FOR '(' expression ';' expression ';' expression ')' commande                         
 ;
 
 expression:
