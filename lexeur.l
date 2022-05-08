@@ -16,6 +16,8 @@ True|False                              { printf("lex::BOOLEAN %s\n",yytext); re
 ==|\<=|>=|<|>|"||"|&&                   { printf("lex::OPERATIONBOOL %s\n",yytext); return OPERATIONBOOL; }  
 if  						            { printf("lex::IF %s\n", yytext); return IF;}
 else						            { printf("lex::ELSE %s\n", yytext); return ELSE;}
+do						                { printf("lex::DO %s\n", yytext); return DO;}
+while						            { printf("lex::WHILE %s\n", yytext); return WHILE;}
 [a-zA-Z_][a-zA-Z0-9_]*                  { printf("lex::IDENT %s\n",yytext); return IDENT;}
 =							            { printf("lex::AFF %s\n", yytext); return AFF;} 
 [ \t\n] 	                            { ; } /* ignore space, tab, and line return*/

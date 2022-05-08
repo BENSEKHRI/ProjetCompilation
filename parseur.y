@@ -19,7 +19,7 @@
 %left '{' '}'
 %left ';'
 %left AFF
-%left IF ELSE
+%left IF ELSE DO WHILE
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
@@ -43,6 +43,7 @@ commande:
     | ';'                         
     | '{' programme '}'                         
     | IF '(' expression ')' commande ELSE commande                         
+    | DO commande WHILE '(' expression ')'                         
 ;
 
 expression:
