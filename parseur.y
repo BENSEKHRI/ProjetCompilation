@@ -24,7 +24,7 @@
 %left '{' '}'
 %left ';'
 %left AFF
-%left IF ELSE DO WHILE FOR FUNCTION RETUR
+%left IF ELSE DO WHILE FOR FUNCTION RETURN
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
