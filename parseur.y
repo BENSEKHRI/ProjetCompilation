@@ -70,6 +70,7 @@ commande:
   | '{' programme '}'                             { $$ = newCommandeProg($2); }
   | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("if","else",$3,$5,$7); }                        
   | DO commande WHILE '(' expression ')'          { $$ = newCommandeDoWhileAST("do","while",$2,$5); }               
+  | WHILE '(' expression ')' commande                         
 ;
 
 expression: 
