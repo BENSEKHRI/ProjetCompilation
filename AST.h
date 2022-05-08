@@ -128,6 +128,9 @@ commande_ast newCommandeIfElseAST(char *iF, char *eLse, AST son, commande_ast tH
 /* Create a command from a do while */
 commande_ast newCommandeDoWhileAST(char *dO, char *wHile, commande_ast doCom, AST whileSon);
 
+/* Create a command from a while */
+commande_ast newCommandeWhileAST(char *wHile, AST son, commande_ast com);
+
 /* delete a command */
 void freeCommande(commande_ast c);
 

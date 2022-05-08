@@ -59,4 +59,62 @@ Tous les tests du fragement c0, c1, c2 et c3.0 plus ce qui suit:
 
 Test N°01:
 ----------
-while(1)12+1; 
+
+On exécute le fichier toto.js qui contient le code suivant: 
+while (12 == 12) {
+    c = 1 + 3;
+}
+
+./main toto.js 
+
+lex::WHILE while
+lex::char (
+lex::NOMBRE 12
+lex::OPERATIONBOOL ==
+lex::NOMBRE 12
+lex::char )
+lex::char {
+lex::IDENT c
+lex::AFF =
+lex::NOMBRE 1
+lex::char +
+lex::NOMBRE 3
+lex::char ;
+
+IDENT: c is new - Addition in progress...
+IDENT = | c |
+
+lex::char }
+
+Parsing:: syntax OK
+
+Root symbol:: 
+
+/*-------------------------------------.
+|    Writing the file toto.jsm    |
+`-------------------------------------*/
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| :while: [ [ :12: ] :==: [ :12: ] ] | [ :c: :=: [ [ :1: ] :+: [ :3: ] ] ] :;: | | 
+
+
+Voici le résultat dans toto.jsm :
+
+CsteNb 12
+CsteNb 12
+Equals
+CondJump 9
+CsteNb 1
+CsteNb 3
+AddiNb
+SetVar c
+GetVar c
+Jump -10
+Halt
+
+On remarque que les offset sont faux dans quelques cas. 
+
+
