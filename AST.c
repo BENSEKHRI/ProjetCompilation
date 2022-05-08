@@ -1008,6 +1008,8 @@ void printCommande(commande_ast c)
 
     if (c->expression)
     {
+      if (c->motCle1 && strcmp(c->motCle1, "function") != 0)
+        printf(":%s: ", c->motCle1);
 
       if (c->motCle2 && strcmp(c->motCle2, "return") == 0)
         printf(":%s: ", c->motCle2);

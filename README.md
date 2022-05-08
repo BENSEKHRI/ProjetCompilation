@@ -62,11 +62,9 @@ Test N°01:
 On test avec le fichier toto.js qui contient ce qui suit:
 
 function name(x) {
-    for (x = 0; x < 12; x + 1) {
-        x = x + 1;
-    }
+    x = x + 1;
     return x;
-} 
+}
 
 ./main toto.js
 
@@ -112,3 +110,23 @@ lex::char ;
 lex::char }
 
 Parsing:: syntax OK
+
+Root symbol:: 
+
+/*-------------------------------------.
+|    Writing the file toto.jsm    |
+`-------------------------------------*/
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+{ 
+        | :function: :name: ( :x: ) 
+        [ :x: :=: [ :0: ] ] [ [ :x: ] :<: [ :12: ] ] [ [ :x: ] :+: [ :1: ] ] | [ :x: :=: [ [ :x: ] :+: [ :1: ] ] ] :;: | | 
+        | :return: [ :x: ] | 
+}
+
+
+### NOTE
+Nous avons pas encore effectué le code assembleur pour les fonctions.

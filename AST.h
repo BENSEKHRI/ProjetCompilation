@@ -199,7 +199,6 @@ void codeProg(programme_ast prog);
 
 /* write a post-fix command in a file*/
 void writeCodeProgInFile(programme_ast prog, char const *filename);
-
 /*-----------------------------------------------.
 |                   decl_args                    |
 `-----------------------------------------------*/
