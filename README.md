@@ -54,18 +54,18 @@ Les variable sont stocker dans une liste globale est à chaque ajout d'un identi
 Les test de fonctionnalité qui ont été mené sont les suivants: 
 Tous les tests du fragement c0, c1 et c2.0 plus ce qui suit:
 
-Un programme est maintenant une séquence de commandes, tandis qu'une commande est soit une expression expr ; soit une nouvelle commande If(_) _ Else _ .
+Un programme est maintenant une séquence de commandes, tandis qu'une commande est soit une expression expr ; soit une nouvelle commande if(_) _ else _ .
 
 Test N°01:
 ----------
-If(True) False; Else True; €
-lex::IF If
+if(True) False; else True; €
+lex::IF if
 lex::char (
 lex::BOOLEAN True
 lex::char )
 lex::BOOLEAN False
 lex::char ;
-lex::ELSE Else
+lex::ELSE else
 lex::BOOLEAN True
 lex::char ;
 
@@ -76,7 +76,7 @@ Parsing:: syntax OK
 |    AST    |
 `----------*/
 Program:
-| :If: [ :True: ] | [ :False: ] :;: | :Else: | [ :True: ] :;: | | 
+| :if: [ :True: ] | [ :False: ] :;: | :else: | [ :True: ] :;: | | 
 
 
 /*----------------.
@@ -106,12 +106,12 @@ Programme exécuté avec succes
 Test N°02: 
 ----------
 Exécution avec le fichier toto.js qui contient : 
-If(12 < 12 * 12) c = 2 + 3;
+if(12 < 12 * 12) c = 2 + 3;
 
 ./main toto.js
 
-Else c = 41 % 12;
-lex::IF If
+else c = 41 % 12;
+lex::IF if
 lex::char (
 lex::NOMBRE 12
 lex::OPERATIONBOOL <
@@ -129,7 +129,7 @@ lex::char ;
 IDENT: c is new - Addition in progress...
 IDENT = | c |
 
-lex::ELSE Else
+lex::ELSE else
 lex::IDENT c
 lex::AFF =
 lex::NOMBRE 41
@@ -153,7 +153,7 @@ Root symbol::
 |    AST    |
 `----------*/
 Program:
-| :If: [ [ :12: ] :<: [ [ :12: ] :*: [ :12: ] ] ] | [ :c: :=: [ [ :2: ] :+: [ :3: ] ] ] :;: | :Else: | [ :c: :=: [ [ :41: ] :-: [ :12: ] ] ] :;: | | 
+| :if: [ [ :12: ] :<: [ [ :12: ] :*: [ :12: ] ] ] | [ :c: :=: [ [ :2: ] :+: [ :3: ] ] ] :;: | :else: | [ :c: :=: [ [ :41: ] :-: [ :12: ] ] ] :;: | | 
 
 
 
