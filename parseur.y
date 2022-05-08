@@ -44,6 +44,7 @@ commande:
     | '{' programme '}'                         
     | IF '(' expression ')' commande ELSE commande                         
     | DO commande WHILE '(' expression ')'                         
+    | WHILE '(' expression ')' commande                         
 ;
 
 expression:
