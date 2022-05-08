@@ -74,37 +74,96 @@ if (12 < 4) {
 
 lex::IF if
 lex::char (
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::OPERATIONBOOL <
-lex::NUMBER 4
+lex::NOMBRE 4
 lex::char )
 lex::char {
 lex::IDENT x
 lex::AFF =
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char ;
+
+IDENT: x is new - Addition in progress...
+IDENT = | x |
+
 lex::IDENT TOTO
 lex::AFF =
-lex::NUMBER 113
+lex::NOMBRE 113
 lex::char ;
+
+IDENT: TOTO is new - Addition in progress...
+IDENT = | TOTO | x |
+
 lex::char }
 lex::ELSE else
 lex::char {
 lex::IDENT TOTO
 lex::AFF =
-lex::NUMBER 1224
+lex::NOMBRE 1224
 lex::char ;
+
+IDENT: TOTO is already present. - Update in progress...
+IDENT = | TOTO | x |
+
 lex::IDENT toto
 lex::AFF =
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char ;
+
+IDENT: toto is new - Addition in progress...
+IDENT = | toto | TOTO | x |
+
 lex::IDENT x
 lex::AFF =
-lex::NUMBER 4
+lex::NOMBRE 4
 lex::char ;
+
+IDENT: x is already present. - Update in progress...
+IDENT = | toto | TOTO | x |
+
 lex::char }
 
 Parsing:: syntax OK
+
+Root symbol:: 
+
+/*-------------------------------------.
+|    Writing the file toto.jsm    |
+`-------------------------------------*/
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| :if: [ [ :12: ] :<: [ :4: ] ] | [ :x: :=: [ :12: ] ] :;: | 
+        | [ :TOTO: :=: [ :113: ] ] :;: | :else: | [ :TOTO: :=: [ :1224: ] ] :;: | 
+        | [ :toto: :=: [ :12: ] ] :;: | 
+        | [ :x: :=: [ :4: ] ] :;: | | 
+
+Voici le contenu du fichier toto.jsm :
+
+CsteNb 12
+CsteNb 4
+LoStNb
+CondJump 7
+CsteNb 12
+SetVar x
+GetVar x
+CsteNb 113
+SetVar TOTO
+GetVar TOTO
+Jump 3
+CsteNb 1224
+SetVar TOTO
+GetVar TOTO
+CsteNb 12
+SetVar toto
+GetVar toto
+CsteNb 4
+SetVar x
+GetVar x
+Halt
 
 
 
