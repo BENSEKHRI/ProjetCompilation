@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
         {                                        /* yyparse calls yylex */
             printf("\nParsing:: syntax OK\n\n"); /* reached if parsing folllows the grammar */
 
-            /* print the obtained tree */
+            /* print the obtained tree *
             if (prog->expression->left != NULL)
-                printf("Root symbol:: %c\n", prog->expression->car); /* check if car at root */
+                printf("Root symbol:: %c\n", prog->expression->car); * check if car at root */
             printf("\n/*----------.\n");
             printf("|    AST    |\n");
             printf("`----------*/\n");

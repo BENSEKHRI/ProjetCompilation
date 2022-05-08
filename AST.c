@@ -744,20 +744,17 @@ commande_ast newCommandePVirgAST(char pVirg)
   return c;
 }
 
-
 /**
  * @brief   Cette fonction permet de créer une ommande à partir d'une séquence de commandes, c'est a dire à partir d'un programme.
- * 
+ *
  * @param prog la séquence de commandes
  * @return commande_ast la commande en sortie.
  */
-commande_ast newCommandeProg(programme_ast prog) {
+commande_ast newCommandeProg(programme_ast prog)
+{
   commande_ast c = prog;
-  c->suivant = prog->suivant;
-  c->taille += c->expression->taille;
   return c;
 }
-
 
 /**
  * @brief   Cette fonction permet de créer une commande a partir de deux mots clé If et Else une expression qui est un AST et deux commandes pour le then et le else.
@@ -814,42 +811,34 @@ void printCommande(commande_ast c)
 {
   if (c != NULL)
   {
-    if (!c->suivant) 
+    printf("| ");
+
+    if (c->expression)
     {
-      printf("| ");
+      if (c->motCle1)
+        printf(":%s: ", c->motCle1);
 
-      if (c->expression)
-      {
-        if (c->motCle1)
-          printf(":%s: ", c->motCle1);
-
-        printAST(c->expression);
-        if (c->pVirg)
-          printf(":%c: ", c->pVirg);
-      }
-      else
+      printAST(c->expression);
+      if (c->pVirg)
         printf(":%c: ", c->pVirg);
-
-      printCommande(c->left);
-
-      if (c->motCle2)
-        printf(":%s: ", c->motCle2);
-
-      printCommande(c->right);
-
-      printf("| ");
     }
-    else 
-    {
-      printf("lalalalalal\n");
-      printProg(c);
-    }
+    else
+      printf(":%c: ", c->pVirg);
+
+    printCommande(c->left);
+
+    if (c->motCle2)
+      printf(":%s: ", c->motCle2);
+
+    printCommande(c->right);
+
+    printf("| ");   
   }
 }
 
 /**
  * @brief Cette fonction permet un affichage de la sortie post fixe de la commande.
- * 
+ *
  * @param c la commande
  */
 void codeCommande(commande_ast c)
@@ -874,7 +863,7 @@ void codeCommande(commande_ast c)
 /**
  * @brief Cette fonction permet d'ecrire la sortie post fixe d'une commande dans un fichier.
  *
- * @param c la commmande 
+ * @param c la commmande
  * @param filename nom du fichier qui contiendera la sortie post fixe de l'AST
  */
 void writeCodeCommandeInFile(commande_ast c, char const *filename)
@@ -885,7 +874,8 @@ void writeCodeCommandeInFile(commande_ast c, char const *filename)
     fseek(f, 0, SEEK_END);
     if (c != NULL)
     {
-      if (c->expression) {
+      if (c->expression)
+      {
         fseek(f, 0, SEEK_END);
         writeCodeASTInFile(c->expression, filename);
       }
@@ -896,7 +886,8 @@ void writeCodeCommandeInFile(commande_ast c, char const *filename)
         fprintf(f, "CondJump %d\n", c->left->taille += 1);
         fseek(f, 0, SEEK_END);
         writeCodeCommandeInFile(c->left, filename);
-        if (c->right) {
+        if (c->right)
+        {
           fseek(f, 0, SEEK_END);
           fprintf(f, "Jump %d\n", c->taille);
         }

@@ -59,10 +59,23 @@ Tous les tests du fragement p0, p1, p2.0 et p2.1 plus ce qui suit:
 
 Test N°01:
 ----------
-; €
+;€
 lex::char ;
 
 Parsing:: syntax OK
+
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| [ :;: ] :;: | 
+
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+Halt
 
 
 Test N°02: 
@@ -71,15 +84,19 @@ Test N°02:
 lex::char {
 lex::IDENT x
 lex::AFF =
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char *
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char +
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char ;
+
+IDENT: x is new - Addition in progress...
+IDENT = | x |
+
 lex::IDENT x
 lex::OPERATIONBOOL >=
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char ?
 lex::BOOLEAN True
 lex::char :
@@ -88,6 +105,29 @@ lex::char ;
 lex::char }
 
 Parsing:: syntax OK
+
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| [ :x: :=: [ [ [ :12: ] :*: [ :12: ] ] :+: [ :12: ] ] ] :;: | 
+
+
+/*----------------.
+|    POST-FIXE    |
+`----------------*/
+CsteNb 12
+CsteNb 12
+MultNb
+CsteNb 12
+AddiNb
+SetVar x
+GetVar x
+Halt
+
+
+Malheuesement pour cette étape il reconnait bien la commande par contre on y arrive pas à faire exécuter les fonctions sur l'ensemble des commande à l'intérieur de la commande composé.
 
 
 Test N°03:
@@ -105,30 +145,79 @@ On exécute avec le fichier toto.js qui contient ceci :
 lex::char {
 lex::IF If
 lex::char (
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::OPERATIONBOOL <
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char *
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char )
 lex::IDENT c
 lex::AFF =
-lex::NUMBER 2
+lex::NOMBRE 2
 lex::char +
-lex::NUMBER 3
+lex::NOMBRE 3
 lex::char ;
+
+IDENT: c is new - Addition in progress...
+IDENT = | c |
+
 lex::ELSE Else
 lex::IDENT c
 lex::AFF =
-lex::NUMBER 41
+lex::NOMBRE 41
 lex::char -
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char ;
+
+IDENT: c is already present. - Update in progress...
+IDENT = | c |
+
 lex::char ;
 lex::IDENT x
 lex::AFF =
-lex::NUMBER 12
+lex::NOMBRE 12
 lex::char ;
+
+IDENT: x is new - Addition in progress...
+IDENT = | x | c |
+
 lex::char }
 
 Parsing:: syntax OK
+
+Root symbol:: 
+
+/*-------------------------------------.
+|    Writing the file toto.jsm    |
+`-------------------------------------*/
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| :If: [ [ :12: ] :<: [ [ :12: ] :*: [ :12: ] ] ] | [ :c: :=: [ [ :2: ] :+: [ :3: ] ] ] :;: | :Else: | [ :c: :=: [ [ :41: ] :-: [ :12: ] ] ] :;: | | 
+
+
+Le résultat dans toto.jsm
+
+CsteNb 12
+CsteNb 12
+CsteNb 12
+MultNb
+LoStNb
+CondJump 5
+CsteNb 2
+CsteNb 3
+AddiNb
+SetVar c
+GetVar c
+Jump 5
+CsteNb 41
+CsteNb 12
+SubiNb
+SetVar c
+GetVar c
+Halt
+
+
+Même problème que dans le test N° 2.
