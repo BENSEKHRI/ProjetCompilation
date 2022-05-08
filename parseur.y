@@ -72,7 +72,7 @@ commande:
   | IF '(' expression ')' commande ELSE commande                    { $$ = newCommandeIfElseAST("if","else",$3,$5,$7); }                        
   | DO commande WHILE '(' expression ')'                            { $$ = newCommandeDoWhileAST("do","while",$2,$5); }               
   | WHILE '(' expression ')' commande                               { $$ = newCommandeWhileAST("while",$3,$5); }                         
-  | FOR '(' expression ';' expression ';' expression ')' commande   { $$ = newCommandeWhileAST("while",$3,$5); }                       
+  | FOR '(' expression ';' expression ';' expression ')' commande   { $$ = newCommandeForAST("for",$3, $5, $7, $9); }                       
 ;
 
 expression: 

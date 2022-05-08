@@ -68,3 +68,72 @@ for (x = 0; x < 12; x + 1) {
 
 
 ./main toto.js 
+
+lex::FOR for
+lex::char (
+lex::IDENT x
+lex::AFF =
+lex::NOMBRE 0
+lex::char ;
+
+IDENT: x is new - Addition in progress...
+IDENT = | x |
+
+lex::IDENT x
+lex::OPERATIONBOOL <
+lex::NOMBRE 12
+lex::char ;
+lex::IDENT x
+lex::char +
+lex::NOMBRE 1
+lex::char )
+lex::char {
+lex::IDENT x
+lex::AFF =
+lex::IDENT x
+lex::char +
+lex::NOMBRE 1
+lex::char ;
+
+IDENT: x is already present. - Update in progress...
+IDENT = | x |
+
+lex::char }
+
+Parsing:: syntax OK
+
+Root symbol:: 
+
+/*-------------------------------------.
+|    Writing the file toto.jsm    |
+`-------------------------------------*/
+
+/*----------.
+|    AST    |
+`----------*/
+Program:
+| :for: [ :x: :=: [ :0: ] ] [ [ :x: ] :<: [ :12: ] ] [ [ :x: ] :+: [ :1: ] ] | [ :x: :=: [ [ :x: ] :+: [ :1: ] ] ] :;: | | 
+
+
+Voici le contenue du fichier toto.jsm :
+
+CsteNb 0
+SetVar x
+GetVar x
+GetVar x
+CsteNb 12
+LoStNb
+CondJump 9
+GetVar x
+CsteNb 1
+AddiNb
+SetVar x
+GetVar x
+GetVar x
+CsteNb 1
+AddiNb
+Jump -9
+Halt
+
+
+Le problème est juste dans les offsets.

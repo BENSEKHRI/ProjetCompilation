@@ -37,6 +37,8 @@ struct _commande_ast
 {
   int taille;
   AST expression;
+  AST expression2;               /* deuxième expression for */
+  AST expression3;               /* troisième expression for */
   char pVirg;
   char *motCle1;                 /* Mot clé 1 pour les intruction exempl: IF, Else... */
   char *motCle2;                 /* Mot clé 1 pour les intruction exempl: IF, Else... */
@@ -130,6 +132,9 @@ commande_ast newCommandeDoWhileAST(char *dO, char *wHile, commande_ast doCom, AS
 
 /* Create a command from a while */
 commande_ast newCommandeWhileAST(char *wHile, AST son, commande_ast com);
+
+/* Create a command from a for */
+commande_ast newCommandeForAST(char *fOr, AST son1, AST son2, AST son3, commande_ast com);
 
 /* delete a command */
 void freeCommande(commande_ast c);
