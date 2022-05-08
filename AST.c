@@ -779,8 +779,15 @@ commande_ast copyList(programme_ast prog)
 commande_ast newCommandeProg(programme_ast prog)
 {
   commande_ast commande = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
-  if (commande != NULL) /* malloc ok */
+  if (commande != NULL) 
+  { /* malloc ok */
     commande = copyList(prog);
+    while (prog)
+    {
+      commande->taille += prog->expression->taille;
+      prog = prog->suivant;
+    }
+  }
   else
     printf("MALLOC! ");
   return commande;
@@ -814,6 +821,30 @@ commande_ast newCommandeIfElseAST(char *iF, char *eLse, AST son, commande_ast tH
 }
 
 /**
+ * @brief   Cette fonction permet de créer une nouvelle commande à partir de deux mot clé do et while ainsi que la commande de do et l'expression de while.
+ * 
+ * @param dO mot clé do 
+ * @param wHile mot clé while
+ * @param doCom commande de do
+ * @param whileSon expression de while
+ * @return commande_ast 
+ */
+commande_ast newCommandeDoWhileAST(char *dO, char *wHile, commande_ast doCom, AST whileSon) {
+  commande_ast c = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
+  if (c != NULL)
+  { /* malloc ok */
+    c->motCle1 = strdup(dO);
+    c->motCle2 = strdup(wHile);
+    c->expression = whileSon;
+    c->left = doCom;
+    c->taille += c->expression->taille + c->left->expression->taille;
+  }
+  else
+    printf("MALLOC! ");
+  return c;
+}
+
+/**
  * @brief   Cette fonction permet de libérer la mémoire allouée par une commande
  *
  * @param c La commande.
@@ -827,6 +858,13 @@ void freeCommande(commande_ast c)
     freeCommande(c->right);
     free(c->motCle1);
     free(c->motCle2);
+    commande_ast commandeNext = NULL;
+    while (c)
+    {
+      commandeNext = c->next;
+      freeCommande(c);
+      c = commandeNext;;
+    }
     free(c);
   }
 }
@@ -848,7 +886,13 @@ void printCommande(commande_ast c)
       if (c->motCle1)
         printf(":%s: ", c->motCle1);
 
-      printAST(c->expression);
+      if (c->motCle1) {
+        if (strcmp(c->motCle1, "do") != 0)
+          printAST(c->expression);
+      }
+      else
+          printAST(c->expression);
+
       if (c->pVirg)
         printf(":%c: ", c->pVirg);
     }
@@ -861,6 +905,9 @@ void printCommande(commande_ast c)
       printf(":%s: ", c->motCle2);
 
     printCommande(c->right);
+    if (c->motCle1)
+      if (strcmp(c->motCle1, "do") == 0)
+        printAST(c->expression);
 
     printf("| ");
 
@@ -881,16 +928,33 @@ void codeCommande(commande_ast c)
   if (c != NULL)
   {
     if (c->expression)
-      codeAST(c->expression);
+      if (c->motCle1) {
+        if (strcmp(c->motCle1, "do") != 0)
+          codeAST(c->expression);
+      }
+      else
+          codeAST(c->expression);
 
     if (c->left)
     {
-      printf("CondJump %d\n", c->left->taille += 1);
+      if (c->motCle1) {
+        if (strcmp(c->motCle1, "do") != 0)
+          printf("CondJump %d\n", c->left->taille += 1);
+      }
+      else
+        printf("CondJump %d\n", c->left->taille += 1);
+
       codeCommande(c->left);
       if (c->right)
         printf("Jump %d\n", c->taille);
     }
     codeCommande(c->right);
+
+    if (c->motCle1)
+      if (strcmp(c->motCle1, "do") == 0) {
+        codeAST(c->expression);
+        printf("CondJump -%d\n", c->left->taille);
+      }
 
     if (c->next)
       codeCommande(c->next);
@@ -914,14 +978,31 @@ void writeCodeCommandeInFile(commande_ast c, char const *filename)
     {
       if (c->expression)
       {
-        fseek(f, 0, SEEK_END);
-        writeCodeASTInFile(c->expression, filename);
+        if (c->motCle1) {
+          if (strcmp(c->motCle1, "do") != 0) {
+            fseek(f, 0, SEEK_END);
+            writeCodeASTInFile(c->expression, filename);
+          }
+        }
+        else {
+          fseek(f, 0, SEEK_END);
+          writeCodeASTInFile(c->expression, filename);
+        }
       }
 
       if (c->left)
       {
-        fseek(f, 0, SEEK_END);
-        fprintf(f, "CondJump %d\n", c->left->taille += 1);
+        if (c->motCle1) {
+          if (strcmp(c->motCle1, "do") != 0) {
+            fseek(f, 0, SEEK_END);
+            fprintf(f, "CondJump %d\n", c->left->taille += 1);
+          }
+        }
+        else {
+          fseek(f, 0, SEEK_END);
+          fprintf(f, "CondJump %d\n", c->left->taille += 1);
+        }
+        
         fseek(f, 0, SEEK_END);
         writeCodeCommandeInFile(c->left, filename);
         if (c->right)
@@ -933,6 +1014,14 @@ void writeCodeCommandeInFile(commande_ast c, char const *filename)
 
       fseek(f, 0, SEEK_END);
       writeCodeCommandeInFile(c->right, filename);
+
+      if (c->motCle1)
+        if (strcmp(c->motCle1, "do") == 0) {
+          fseek(f, 0, SEEK_END);
+          writeCodeASTInFile(c->expression, filename);
+          fseek(f, 0, SEEK_END);
+          fprintf(f,"CondJump -%d\n", c->left->taille);
+        }
 
       if (c->next) {
         fseek(f, 0, SEEK_END);
@@ -1001,6 +1090,7 @@ void freeProg(programme_ast prog)
 {
   if (prog != NULL)
   {
+
     commande_ast commandeSuivante = NULL;
     while (prog)
     {

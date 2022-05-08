@@ -86,7 +86,7 @@ void printAST(AST t);
 
 /* print post-fix an AST*/
 void codeAST(AST t);
-commande_ast addProgToCom(commande_ast commande, programme_ast newProg);
+
 /* write a post-fix AST in a file*/
 void writeCodeASTInFile(AST t, char const *filename);
 
@@ -124,6 +124,9 @@ commande_ast newCommandeProg(programme_ast prog);
 
 /* Create a command from a if else */
 commande_ast newCommandeIfElseAST(char *iF, char *eLse, AST son, commande_ast tHen, commande_ast elseCom);
+
+/* Create a command from a do while */
+commande_ast newCommandeDoWhileAST(char *dO, char *wHile, commande_ast doCom, AST whileSon);
 
 /* delete a command */
 void freeCommande(commande_ast c);

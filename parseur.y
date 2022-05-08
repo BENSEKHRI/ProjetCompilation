@@ -68,8 +68,8 @@ commande:
     expression ';'                                { $$ = newCommandeExpAST($1,';'); }              
   | ';'                                           { $$ = newCommandePVirgAST(';'); }
   | '{' programme '}'                             { $$ = newCommandeProg($2); }
-  | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("If","Else",$3,$5,$7); }                        
-  | DO commande WHILE '(' expression ')'                         
+  | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("if","else",$3,$5,$7); }                        
+  | DO commande WHILE '(' expression ')'          { $$ = newCommandeDoWhileAST("do","while",$2,$5); }               
 ;
 
 expression: 
