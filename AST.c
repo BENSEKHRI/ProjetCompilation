@@ -745,6 +745,32 @@ commande_ast newCommandePVirgAST(char pVirg)
 }
 
 /**
+ * @brief   Cette fonction permet de copier les suivant du programme de la commande dans les next de la commandes.
+ *
+ * @param prog le programme de la commande entre { }
+ * @return commande_ast la commande finale.
+ */
+commande_ast copyList(programme_ast prog)
+{
+  if (prog == NULL)
+  {
+    return NULL;
+  }
+  else
+  {
+    commande_ast commande = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
+    if (commande != NULL)
+    { /* malloc ok */
+      commande = prog;
+      commande->next = copyList(prog->suivant);
+    }
+    else
+      printf("MALLOC! ");
+    return commande;
+  }
+}
+
+/**
  * @brief   Cette fonction permet de créer une ommande à partir d'une séquence de commandes, c'est a dire à partir d'un programme.
  *
  * @param prog la séquence de commandes
@@ -752,8 +778,12 @@ commande_ast newCommandePVirgAST(char pVirg)
  */
 commande_ast newCommandeProg(programme_ast prog)
 {
-  commande_ast c = prog;
-  return c;
+  commande_ast commande = (struct _commande_ast *)malloc(sizeof(struct _commande_ast));
+  if (commande != NULL) /* malloc ok */
+    commande = copyList(prog);
+  else
+    printf("MALLOC! ");
+  return commande;
 }
 
 /**
@@ -832,7 +862,12 @@ void printCommande(commande_ast c)
 
     printCommande(c->right);
 
-    printf("| ");   
+    printf("| ");
+
+    if (c->next) {
+      printf("\n\t");
+      printCommande(c->next);
+    }
   }
 }
 
@@ -856,6 +891,9 @@ void codeCommande(commande_ast c)
         printf("Jump %d\n", c->taille);
     }
     codeCommande(c->right);
+
+    if (c->next)
+      codeCommande(c->next);
   }
 }
 
@@ -895,6 +933,11 @@ void writeCodeCommandeInFile(commande_ast c, char const *filename)
 
       fseek(f, 0, SEEK_END);
       writeCodeCommandeInFile(c->right, filename);
+
+      if (c->next) {
+        fseek(f, 0, SEEK_END);
+        writeCodeCommandeInFile(c->next, filename);
+      }
       fclose(f);
     }
   }
@@ -926,7 +969,7 @@ programme_ast newProgramme()
  *
  * @param prog Le programme auquel on ajoute la commande.
  * @param newCommande La commande a ajotuer
- * @return programme_astle prgramme après ajout de la commande
+ * @return programme_ast le prgramme après ajout de la commande
  */
 programme_ast addComToProg(programme_ast prog, commande_ast newCommande)
 {
@@ -981,7 +1024,11 @@ void printProg(programme_ast prog)
     commande_ast tmpCommande = prog;
     while (tmpCommande)
     {
+      if (tmpCommande->next)
+        printf("{ \n\t");
       printCommande(tmpCommande);
+            if (tmpCommande->next)
+        printf("\n}");
       printf("\n");
       tmpCommande = tmpCommande->suivant;
     }

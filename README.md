@@ -78,9 +78,22 @@ Program:
 Halt
 
 
-Test N°02: 
+Test N°03:
 ----------
-{x=12*12+12;x>=12?True:False;}€
+On exécute avec le fichier toto.js qui contient ceci :
+
+{
+    x = 12 * 12 + 12;
+    if (x == 12) {
+        c = 12;
+    } else {
+        c = 14;
+        y = 12;
+    }
+}
+
+./main toto.js
+
 lex::char {
 lex::IDENT x
 lex::AFF =
@@ -94,93 +107,41 @@ lex::char ;
 IDENT: x is new - Addition in progress...
 IDENT = | x |
 
-lex::IDENT x
-lex::OPERATIONBOOL >=
-lex::NOMBRE 12
-lex::char ?
-lex::BOOLEAN True
-lex::char :
-lex::BOOLEAN False
-lex::char ;
-lex::char }
-
-Parsing:: syntax OK
-
-
-/*----------.
-|    AST    |
-`----------*/
-Program:
-| [ :x: :=: [ [ [ :12: ] :*: [ :12: ] ] :+: [ :12: ] ] ] :;: | 
-
-
-/*----------------.
-|    POST-FIXE    |
-`----------------*/
-CsteNb 12
-CsteNb 12
-MultNb
-CsteNb 12
-AddiNb
-SetVar x
-GetVar x
-Halt
-
-
-Malheuesement pour cette étape il reconnait bien la commande par contre on y arrive pas à faire exécuter les fonctions sur l'ensemble des commande à l'intérieur de la commande composé.
-
-
-Test N°03:
-----------
-On exécute avec le fichier toto.js qui contient ceci :
-
-{
-    If(12 < 12 * 12) c = 2 + 3;
-    Else c = 41 - 12;;
-    x = 12;
-}
-
-./main toto.js
-
-lex::char {
-lex::IF If
+lex::IF if
 lex::char (
-lex::NOMBRE 12
-lex::OPERATIONBOOL <
-lex::NOMBRE 12
-lex::char *
+lex::IDENT x
+lex::OPERATIONBOOL ==
 lex::NOMBRE 12
 lex::char )
+lex::char {
 lex::IDENT c
 lex::AFF =
-lex::NOMBRE 2
-lex::char +
-lex::NOMBRE 3
+lex::NOMBRE 12
 lex::char ;
 
 IDENT: c is new - Addition in progress...
-IDENT = | c |
+IDENT = | c | x |
 
-lex::ELSE Else
+lex::char }
+lex::ELSE else
+lex::char {
 lex::IDENT c
 lex::AFF =
-lex::NOMBRE 41
-lex::char -
-lex::NOMBRE 12
+lex::NOMBRE 14
 lex::char ;
 
 IDENT: c is already present. - Update in progress...
-IDENT = | c |
+IDENT = | c | x |
 
-lex::char ;
-lex::IDENT x
+lex::IDENT y
 lex::AFF =
 lex::NOMBRE 12
 lex::char ;
 
-IDENT: x is new - Addition in progress...
-IDENT = | x | c |
+IDENT: y is new - Addition in progress...
+IDENT = | y | c | x |
 
+lex::char }
 lex::char }
 
 Parsing:: syntax OK
@@ -195,29 +156,20 @@ Root symbol::
 |    AST    |
 `----------*/
 Program:
-| :If: [ [ :12: ] :<: [ [ :12: ] :*: [ :12: ] ] ] | [ :c: :=: [ [ :2: ] :+: [ :3: ] ] ] :;: | :Else: | [ :c: :=: [ [ :41: ] :-: [ :12: ] ] ] :;: | | 
+{ 
+        | [ :x: :=: [ [ [ :12: ] :*: [ :12: ] ] :+: [ :12: ] ] ] :;: | 
+        | :If: [ [ :x: ] :==: [ :12: ] ] | [ :c: :=: [ :12: ] ] :;: | :Else: | [ :c: :=: [ :14: ] ] :;: | 
+        | [ :y: :=: [ :12: ] ] :;: | | 
+}
 
+Voici la sortie de la machine js:
 
-Le résultat dans toto.jsm
+...
+...
+...
+PC : 21
+Pile : [ 12 , 156 ]
+Contexte : ( x => 156 ),  ( y => 12 ),  |
+Instruction : Halt
 
-CsteNb 12
-CsteNb 12
-CsteNb 12
-MultNb
-LoStNb
-CondJump 5
-CsteNb 2
-CsteNb 3
-AddiNb
-SetVar c
-GetVar c
-Jump 5
-CsteNb 41
-CsteNb 12
-SubiNb
-SetVar c
-GetVar c
-Halt
-
-
-Même problème que dans le test N° 2.
+Programme exécuté avec succes 

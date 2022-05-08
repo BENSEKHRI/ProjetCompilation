@@ -53,8 +53,8 @@
 
 0|[1-9][0-9]*  	                    { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 1; return NOMBRE; } 
 [0-9]*\.[0-9]+  	                { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 2; return NOMBRE;}
-If  						        { printf("lex::IF %s\n", yytext); return IF;}
-Else						        { printf("lex::ELSE %s\n", yytext); return ELSE;}
+if  						        { printf("lex::IF %s\n", yytext); return IF;}
+else						        { printf("lex::ELSE %s\n", yytext); return ELSE;}
 [0-9]*\.?[0-9]+(e-?[0-9]+)?         { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 3; return NOMBRE;}
 NaN                                 { printf("lex::NOMBRE %s\n",yytext); yylval.num=atof(yytext); yylval.valCal = 4; return NOMBRE;}
 True|False                          { printf("lex::BOOLEAN %s\n",yytext); yylval.boolean=strToBool(yytext); return BOOLEAN; }  

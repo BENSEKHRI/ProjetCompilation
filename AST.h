@@ -38,11 +38,12 @@ struct _commande_ast
   int taille;
   AST expression;
   char pVirg;
-  char *motCle1;               /* Mot clé 1 pour les intruction exempl: IF, Else... */
-  char *motCle2;               /* Mot clé 1 pour les intruction exempl: IF, Else... */
-  struct _commande_ast *left;  /* used for unary node but NULL if leaf */
-  struct _commande_ast *right; /* NULL if unary node or leaf*/
-  struct _commande_ast *suivant;
+  char *motCle1;                 /* Mot clé 1 pour les intruction exempl: IF, Else... */
+  char *motCle2;                 /* Mot clé 1 pour les intruction exempl: IF, Else... */
+  struct _commande_ast *left;    /* used for unary node but NULL if leaf */
+  struct _commande_ast *right;   /* NULL if unary node or leaf*/
+  struct _commande_ast *suivant; /* Un programme est une liste de commande */
+  struct _commande_ast *next;    /* Une commande peut être un programme */
 };
 
 typedef struct _commande_ast *commande_ast;
@@ -53,7 +54,6 @@ typedef struct _commande_ast *programme_ast;
 /*-----------------------------------------------.
 |                AST - expression                |
 `-----------------------------------------------*/
-
 /* create an AST from a root value and two AST sons */
 AST newBinaryAST(char car, AST left, AST right);
 
@@ -86,7 +86,7 @@ void printAST(AST t);
 
 /* print post-fix an AST*/
 void codeAST(AST t);
-
+commande_ast addProgToCom(commande_ast commande, programme_ast newProg);
 /* write a post-fix AST in a file*/
 void writeCodeASTInFile(AST t, char const *filename);
 
@@ -115,6 +115,9 @@ commande_ast newCommandeExpAST(AST expression, char aff_pVirg);
 
 /* Create a command from a semicolon */
 commande_ast newCommandePVirgAST(char aff_pVirg);
+
+/* Copy a list into another list  */
+commande_ast copyList(programme_ast prog);
 
 /* Create a command from a programme */
 commande_ast newCommandeProg(programme_ast prog);
