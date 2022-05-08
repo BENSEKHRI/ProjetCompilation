@@ -35,6 +35,8 @@
 %token <var> IDENT
 %token IF
 %token ELSE
+%token DO
+%token WHILE
 %token AFF
 %token ';'
 
@@ -43,7 +45,7 @@
 %left '{' '}'
 %left ';'
 %left AFF
-%left IF ELSE
+%left IF ELSE DO WHILE
 %left '!'
 %left OPERATIONBOOL 
 %left '?' ':'
@@ -67,6 +69,7 @@ commande:
   | ';'                                           { $$ = newCommandePVirgAST(';'); }
   | '{' programme '}'                             { $$ = newCommandeProg($2); }
   | IF '(' expression ')' commande ELSE commande  { $$ = newCommandeIfElseAST("If","Else",$3,$5,$7); }                        
+  | DO commande WHILE '(' expression ')'                         
 ;
 
 expression: 
