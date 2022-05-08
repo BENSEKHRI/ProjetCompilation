@@ -8,8 +8,13 @@
 %token NUMBER
 %token BOOLEAN
 %token OPERATIONBOOL
+%token FUNCTION
+%token RETURN
 %token IF
 %token ELSE
+%token DO
+%token WHILE
+%token FOR
 %token IDENT
 %token AFF
 %token ';'
@@ -46,6 +51,14 @@ commande:
     | DO commande WHILE '(' expression ')'                         
     | WHILE '(' expression ')' commande                         
     | FOR '(' expression ';' expression ';' expression ')' commande                         
+    | FUNCTION IDENT '(' decl_args ')' '{' programme '}'                         
+    | RETURN expression ';'                         
+;
+
+decl_args: 
+        %empty
+    |   IDENT
+    |   IDENT ',' decl_args
 ;
 
 expression:
@@ -58,12 +71,18 @@ expression:
     |   '!' expression 
     |   expression OPERATIONBOOL expression
     |   expression '?' expression ':' expression
+    |   IDENT '(' arguments ')'
     |   IDENT AFF expression 
     |   NUMBER
     |   BOOLEAN
     |   IDENT			 
 ;
 
+arguments: 
+        %empty 
+    |   expression
+    |   expression ','arguments
+;
 
 %%  // denotes the end of the grammar
     // everything after %% is copied at the end of the generated .c

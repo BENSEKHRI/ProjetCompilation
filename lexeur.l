@@ -14,6 +14,8 @@
 NaN                                     { printf("lex::NUMBER %s\n",yytext); return NUMBER; }
 True|False                              { printf("lex::BOOLEAN %s\n",yytext); return BOOLEAN; }  
 ==|\<=|>=|<|>|"||"|&&                   { printf("lex::OPERATIONBOOL %s\n",yytext); return OPERATIONBOOL; }  
+function  						        { printf("lex::FUNCTION %s\n", yytext); return FUNCTION;}
+return  						        { printf("lex::RETURN %s\n", yytext); return RETURN;}
 if  						            { printf("lex::IF %s\n", yytext); return IF;}
 else						            { printf("lex::ELSE %s\n", yytext); return ELSE;}
 do						                { printf("lex::DO %s\n", yytext); return DO;}

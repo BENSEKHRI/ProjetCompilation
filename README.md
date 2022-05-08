@@ -1,4 +1,4 @@
-# Compilateur JavaScript    -   Fragement p3.2
+# Compilateur JavaScript    -   Fragement p4.0
 Compilateur JavaScript est un projet qui consiste à compiler quelques fragments de javascript en un langage d'assemblage addhoc.
 
 # Auteur
@@ -45,28 +45,35 @@ gcc -o main main.c parseur.tab.c lex.yy.c
 Vous pouvez exécuter le projet sur un fichier js existant directement, et celui-ci vous diras si les instructions contenues dans le fichier sont correctes, ou bien sans fichier en argument, et cela lancera tout simplement la main en console.
 
 # Remarque
-Dans ce fragement p3.2 
+Dans ce fragement p4.0 
 si on execute sur console sans un fichier js, pour finir une instruction on tape ';' et pour finir le programme on tape '€'.
 
 # Teste des fonctionnalités
 Les test de fonctionnalité qui ont été mené sont les suivants: 
-Tous les tests du fragement p0, p1, p2 et p3.1 plus ce qui suit:
+Tous les tests du fragement p0, p1, p2 et p3 plus ce qui suit:
 
-* La boucle for et optimisation.
+* Les fonctions:
 
 
 Test N°01:
 ----------
+On test avec le fichier toto.js qui contient ce qui suit:
 
-On teste avec le fichier toto.js qui contient ce qui suit: 
+function name(x) {
+    for (x = 0; x < 12; x + 1) {
+        x = x + 1;
+    }
+    return x;
+} 
 
-for (x = 0; x < 12; x + 1) {
-    x = x + 1;
-}
+./main toto.js
 
-
-./main toto.js 
-
+lex::FUNCTION function
+lex::IDENT name
+lex::char (
+lex::IDENT x
+lex::char )
+lex::char {
 lex::FOR for
 lex::char (
 lex::IDENT x
@@ -87,6 +94,10 @@ lex::AFF =
 lex::IDENT x
 lex::char +
 lex::NUMBER 1
+lex::char ;
+lex::char }
+lex::RETURN return
+lex::IDENT x
 lex::char ;
 lex::char }
 
